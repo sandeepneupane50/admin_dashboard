@@ -1,0 +1,60 @@
+{
+  "details": [
+    {
+      "company": "Sandoval Bowers Inc",
+      "owner": "Gonzalez Robinson Inc",
+      "email": "bixovop@mailinator.com",
+      "contact": "7777777777777777",
+      "province": "Karnali",
+      "district": "Chitwan",
+      "city": "Sequi amet eum sed ",
+      "street": "Consequat Ea ut tot",
+      "pan": "9",
+      "file": "C:\\fakepath\\image.jpg",
+      "status": "active",
+      "id": 2
+    },
+    {
+      "company": "Butler Le Co",
+      "owner": "Walton and Frost Plc",
+      "email": "qoxyqy@mailinator.com",
+      "contact": "79",
+      "province": "Karnali",
+      "district": "Bhaktapur",
+      "city": "Reprehenderit enim d",
+      "street": "Voluptas perspiciati",
+      "pan": "999",
+      "file": "C:\\fakepath\\traffic.jpg",
+      "status": "active",
+      "id": 3
+    },
+    {
+      "company": "Powers Parrish Associates",
+      "owner": "Lang and Austin Plc",
+      "email": "hejo@mailinator.com",
+      "contact": "15",
+      "province": "Sudur_Pashchim",
+      "district": "Bardiya",
+      "city": "Qui excepteur occaec",
+      "street": "Inventore ut labore ",
+      "pan": "314",
+      "file": "C:\\fakepath\\image.jpg",
+      "status": "active",
+      "id": 4
+    },
+    {
+      "company": "fdcs x.",
+      "owner": "dxsv",
+      "email": "sca@gmail.com",
+      "contact": "55555555555555555",
+      "province": "Lumbini",
+      "district": "Baglung",
+      "city": "cshakjblk",
+      "street": "gh casjk",
+      "pan": "65352",
+      "file": "C:\\fakepath\\image.jpg",
+      "status": "active",
+      "id": 5
+    }
+  ]
+}
