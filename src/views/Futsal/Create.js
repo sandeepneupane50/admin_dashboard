@@ -15,11 +15,12 @@ const FutsalCreate = () => {
   const [pan, setPan] = useState('')
   const [file, setFile] = useState('')
   const [status, setStatus] = useState('')
-  const [error, setError] = useState(false)
+  const [error, setError] = useState([])
   const navigate = useNavigate()
 
   const onOptionChange = e => {
     setStatus(e.target.value)
+    console.log(status)
   }
 
   const validateEmail = (email) => {
@@ -43,22 +44,47 @@ const FutsalCreate = () => {
       status,
     }
 
-
-
-    console.log(detail)
-
-    if (
-      company.length < 0 ||
-      owner.length < 0 ||
-      email.length === 0 ||
-      contact.length === 0 ||
-      province.length === 0 ||
-      district.length === 0 ||
-      city.length === 0 ||
-      street.length === 0 ||
-      pan.length === 0
-    ) {
-      setError(true)
+    if (company.length < 3) {
+      setError({
+        company: "invalid name"
+      })
+    } else if (owner.length < 3) {
+      setError({
+        owner: "must be more than 3"
+      })
+    } else if (!validateEmail === email ) {
+      setError({
+        email: "invalid email"
+      })
+    } else if (contact.length != 10) {
+      setError({
+        contact: "it must be of 10 digit"
+      })
+    } else if (province.length === 0) {
+      setError({
+        province: "plz select province"
+      })
+    } else if (district.length < 3) {
+      setError({
+        district: "plz select district"
+      })
+    } else if (city.length < 3) {
+      setError({
+        city: "invalid city"
+      })
+    } else if (street.length < 3) {
+      setError({
+        street: "invalid street"
+      })
+    } else if (pan.length < 5) {
+      setError({
+        pan: "invalid pan"
+      })
+    } else if (status == '') {
+    
+      setError({
+        status: "plz select"
+      })
     } else {
       fetch('http://localhost:8000/details', {
         method: 'POST',
@@ -84,8 +110,8 @@ const FutsalCreate = () => {
             value={company}
             onChange={(e) => setCompany(e.target.value)}
           />
-          {error && company.length < 3 ?
-            <label className="create-error">it can't be less than 3 letter</label> : ''
+          {error.company ?
+            <label className="create-error">{error.company}</label> : ''
           }
         </CCol>
 
@@ -97,7 +123,7 @@ const FutsalCreate = () => {
             value={owner}
             onChange={(e) => setOwner(e.target.value)}
           />
-          {error && company.length < 3 ?
+          {error['owner'] ?
             <label className="create-error">it can't be less than 3 letter</label> : ''
           }
         </CCol>
@@ -110,7 +136,8 @@ const FutsalCreate = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          {error && !validateEmail(email) && <label className="create-error">Invalid email address</label>}
+          { error['email'] ? 
+            <label className="create-error">Invalid email address</label>: ''}
         </CCol>
         <CCol md={4}>
           <CFormInput
@@ -120,8 +147,8 @@ const FutsalCreate = () => {
             value={contact}
             onChange={(e) => setContact(e.target.value)}
           />
-          {error && contact.length < 10 || contact.length > 10 ?
-            <label className="create-error">invalid contact number</label> : ''
+          {error.contact ?
+            <label className="create-error">{error.contact}</label> : ''
           }
         </CCol>
         <CCol xs={4}>
@@ -138,7 +165,7 @@ const FutsalCreate = () => {
             <option value="Madesh">Madesh</option>
             <option value="Province-No-1">Province No. 1</option>
           </CFormSelect>
-          {error && province.length === 0 ?
+          {error['province'] ?
             <label className="create-error">invalid province</label> : ''
           }
         </CCol>
@@ -197,7 +224,7 @@ const FutsalCreate = () => {
             <option value="Myagdi">Myagdi</option>
             <option value="Nawalparasi">Nawalparasi</option>
           </CFormSelect>
-          {error && district.length === 0 ?
+          {error['district'] ?
             <label className="create-error">invalid district</label> : ''
           }
         </CCol>
@@ -209,7 +236,7 @@ const FutsalCreate = () => {
             value={city}
             onChange={(e) => setCity(e.target.value)}
           />
-          {error && city.length < 5 ?
+          {error['city'] ?
             <label className="create-error">invalid city</label> : ''
           }
         </CCol>
@@ -220,7 +247,7 @@ const FutsalCreate = () => {
             value={street}
             onChange={(e) => setStreet(e.target.value)}
           />
-          {error && street.length < 5 ?
+          {error['street'] ?
             <label className="create-error">invalid street</label> : ''
           }
         </CCol>
@@ -231,7 +258,7 @@ const FutsalCreate = () => {
             value={pan}
             onChange={(e) => setPan(e.target.value)}
           />
-          {error && pan.length < 5 ?
+          {error['pan'] ?
             <label className="create-error">invalid Zip</label> : ''
           }
         </CCol>
@@ -242,11 +269,10 @@ const FutsalCreate = () => {
             feedbackInvalid="Example invalid form file feedback"
             aria-label="file example"
             value={file}
-            required
             label= "Upload Ground Pic:"
             onChange={(e) => setFile(e.target.value)}
           />
-          {error && file === "" ?
+          {error['file'] ?
             <label className="create-error">invalid file</label> : ''
           }
         </CCol>
@@ -258,8 +284,8 @@ const FutsalCreate = () => {
             name="status"
             id="success-outlined"
             label="Active"
-            value="active"
-            checked={status === "active"}
+            value={1}
+            checked={status == 1}
             onChange={onOptionChange}
           />
           <CFormCheck
@@ -268,10 +294,13 @@ const FutsalCreate = () => {
             name="status"
             id="danger-outlined"
             label="Inactive"
-            value="inactive"
-            checked={status === "inactive"}
+            value={0}
+            checked={status == 0}
             onChange={onOptionChange}
-          />
+          /><br></br>
+          {error['status'] ?
+            <label className="create-error">invalid status</label> : ''
+          }
         </CCol>
         <CCol xs={12}>
           <CButton type="submit">Create</CButton>
