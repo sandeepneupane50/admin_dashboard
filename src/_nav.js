@@ -20,6 +20,13 @@ const _nav = [
     to: '/futsals',
     icon: <CIcon icon={cilSoccer} customClassName="nav-icon" />,
   },
+
+  {
+    component: CNavItem,
+    name: 'Bookings',
+    to: '/bookings',
+    icon: <CIcon icon={cilSoccer} customClassName="nav-icon" />,
+  },
 ]
 
 export default _nav

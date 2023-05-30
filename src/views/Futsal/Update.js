@@ -26,6 +26,9 @@ const FutsalUpdate = () => {
   const [street, setStreet] = useState("");
   const [pan, setPan] = useState("");
   const [file, setFile] = useState("");
+  const [openingTime, setOpeningTime] = useState('')
+  const [closingTime, setClosingTime] = useState('')
+  const [ground, setGround] = useState('')
   const [status, setStatus] = useState("");
   const [error, setError] = useState(false);
   const [data, setData] = useState([]);
@@ -39,6 +42,14 @@ const FutsalUpdate = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setSelectedFile(file);
+  };
+
+  const handleOpeningTimeChange = (e) => {
+    setOpeningTime(e.target.value);
+  };
+
+  const handleClosingTimeChange = (e) => {
+    setClosingTime(e.target.value);
   };
 
   const validateEmail = (email) => {
@@ -79,6 +90,18 @@ const FutsalUpdate = () => {
       case "file":
         setFile(value);
         break;
+      case "openingTime":
+        setOpeningTime(value);
+        break;
+      case "closingTime":
+        setClosingTime(value);
+        break;
+      case "ground":
+        setGround(value);
+        break;
+      case "status":
+        setStatus(value);
+        break;  
       default:
         break;
     }
@@ -87,25 +110,81 @@ const FutsalUpdate = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (
-      !validateEmail(email) ||
-      company.length < 3 ||
-      owner.length < 3 ||
-      email.length === 0 ||
-      contact.length < 10 ||
-      province.length === 0 ||
-      district.length === 0 ||
-      city.length < 1 ||
-      street.length < 1 ||
-      // file === "" ||
-      pan.length < 5
-    ) {
-      setError(true);
+    if (company.length < 3) {
+      setError({
+        company: "invalid name"
+      })
+    } else if (owner.length < 3) {
+      setError({
+        owner: "must be more than 3"
+      })
+    } else if (!validateEmail === email) {
+      setError({
+        email: "invalid email"
+      })
+    } else if (contact.length != 10) {
+      setError({
+        contact: "it must be of 10 digit"
+      })
+    } else if (province.length === 0) {
+      setError({
+        province: "plz select province"
+      })
+    } else if (district.length === 3) {
+      setError({
+        district: "plz select district"
+      })
+    } else if (city.length < 3) {
+      setError({
+        city: "invalid city"
+      })
+    } else if (street.length < 3) {
+      setError({
+        street: "invalid street"
+      })
+    } else if (pan.length < 5) {
+      setError({
+        pan: "invalid pan"
+      })
+    } else if (ground.length === 0 ) {
+      setError({
+        ground: "invalid ground"
+      })
+    } else if (status == '') {
+      setError({
+        status: "plz select"
+      })
+    } else if (openingTime === '' || closingTime === '') {
+      setError({
+        openingTime: 'Opening and closing time cannot be empty',
+        closingTime: 'Opening and closing time cannot be empty'
+      });
+    } else if (ground.length === '') {
+      setError({
+        ground: "plz enter number of ground"
+      })
     } else {
+      const updatedData = {
+        company,
+        owner,
+        email,
+        contact,
+        province,
+        district,
+        city,
+        street,
+        pan,
+        file,
+        openingTime,
+        closingTime,
+        ground,
+        status,
+      };
+
       fetch(`http://localhost:8000/details/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(updatedData),
       })
         .then(() => {
           alert("Successfully updated..");
@@ -116,7 +195,6 @@ const FutsalUpdate = () => {
         });
     }
   };
-
   const { id } = useParams();
   useEffect(() => {
     fetch(`http://localhost:8000/details?id=${id}`)
@@ -134,7 +212,11 @@ const FutsalUpdate = () => {
           setStreet(detail.street);
           setPan(detail.pan);
           setFile(detail.file);
+          setOpeningTime(detail.openingTime);
+          setClosingTime(detail.closingTime);
+          setGround(detail.ground);
           setStatus(detail.status);
+          setData(data);
         }
       })
       .catch((error) => {
@@ -156,9 +238,8 @@ const FutsalUpdate = () => {
               onChange={handleChange}
 
             />
-            {error && company.length < 3 ? (
-              <label className="create-error">it can't be less than 3 letter</label>
-            ) : null
+             {error.company ?
+              <label className="create-error">{error.company}</label> : ''
             }
           </CCol>
 
@@ -171,9 +252,8 @@ const FutsalUpdate = () => {
               name="owner"
               onChange={handleChange}
             />
-            {error && owner.length < 3 ? (
-              <label className="create-error">it can't be less than 3 letter</label>
-            ) : null
+            {error['owner'] ?
+              <label className="create-error">{error.owner}</label> : ''
             }
           </CCol>
 
@@ -186,9 +266,8 @@ const FutsalUpdate = () => {
               onChange={handleChange}
               name="email"
             />
-            {error && !validateEmail(email) ? (
-              <label className="create-error">Invalid email address</label>
-            ) : null}
+            {error['email'] ?
+              <label className="create-error">{error.email}</label> : ''}
           </CCol>
           <CCol md={4}>
             <CFormInput
@@ -199,9 +278,8 @@ const FutsalUpdate = () => {
               onChange={handleChange}
               name="contact"
             />
-            {error && contact.length < 10 || contact.length > 10 ? (
-              <label className="create-error">invalid contact number</label>
-            ) : null
+            {error.contact ?
+              <label className="create-error">{error.contact}</label> : ''
             }
           </CCol>
           <CCol xs={4}>
@@ -219,9 +297,8 @@ const FutsalUpdate = () => {
               <option value="Madesh">Madesh</option>
               <option value="Province-No-1">Province No. 1</option>
             </CFormSelect>
-            {error && province.length === 0 ? (
-              <label className="create-error">invalid province</label>
-            ) : null
+            {error['province'] ?
+              <label className="create-error">{error.province}</label> : ''
             }
           </CCol>
 
@@ -280,9 +357,8 @@ const FutsalUpdate = () => {
               <option value="Myagdi">Myagdi</option>
               <option value="Nawalparasi">Nawalparasi</option>
             </CFormSelect>
-            {error && district.length === 0 ? (
-              <label className="create-error">invalid district</label>
-            ) : null
+            {error['district'] ?
+              <label className="create-error">{error.district}</label> : ''
             }
           </CCol>
 
@@ -294,9 +370,8 @@ const FutsalUpdate = () => {
               onChange={handleChange}
               name="city"
             />
-            {error && city.length < 5 ? (
-              <label className="create-error">invalid city</label>
-            ) : null
+            {error['city'] ?
+              <label className="create-error">{error.city}</label> : ''
             }
           </CCol>
           <CCol md={4}>
@@ -307,12 +382,11 @@ const FutsalUpdate = () => {
               onChange={handleChange}
               name="street"
             />
-            {error && street.length < 5 ? (
-              <label className="create-error">invalid street</label>
-            ) : null
+            {error['street'] ?
+              <label className="create-error">{error.street}</label> : ''
             }
           </CCol>
-          <CCol md={4}>
+          <CCol md={3}>
             <CFormInput
               id="inputNumber"
               label="Pan Number:"
@@ -320,12 +394,11 @@ const FutsalUpdate = () => {
               onChange={handleChange}
               name="pan"
             />
-            {error && pan.length < 5 ? (
-              <label className="create-error">invalid Zip</label>
-            ) : null
+            {error['pan'] ?
+              <label className="create-error">{error.pan}</label> : ''
             }
           </CCol>
-          <CCol md={6}>
+          <CCol md={3}>
             <CFormInput
               type="file"
               id="validationTextarea"
@@ -335,12 +408,50 @@ const FutsalUpdate = () => {
               onChange={handleFileChange}
               name="file"
             />
-            {error && file === 0 ? (
-              <label className="create-error">invalid file</label>
-            ) : null
+            {error['file'] ?
+              <label className="create-error">{error.file}</label> : ''
             }
           </CCol>
-          <CCol xs={6}>
+
+          <CCol xs={2}>
+            <CFormInput
+              label="Opening Time:"
+              type="time"
+              id="openingTime"
+              value={openingTime}
+              onChange={handleOpeningTimeChange}
+            />
+            {error['openingTime'] ?
+              <label className="create-error">{error.openingTime}</label> : ''
+            }
+          </CCol>
+          <CCol xs={2}>
+            <CFormInput
+              label="Closing Time:"
+              type="time"
+              id="closingTime"
+              value={closingTime}
+              onChange={handleClosingTimeChange}
+            />
+            {error['closingTime'] ?
+              <label className="create-error">{error.closingTime}</label> : ''
+            }
+          </CCol>
+
+           
+          <CCol md={2}>
+            <CFormInput
+              type="number"
+              id="inputGround"
+              label="No. of Grounds:"
+              value={ground}
+              onChange={(e) => setGround(e.target.value)}
+            />
+            {error.ground ?
+              <label className="create-error">{error.ground}</label> : ''
+            }
+          </CCol>
+          <CCol xs={3}>
             <label>Status:</label> <br></br>
             <CFormCheck
               button={{ color: 'success', variant: 'outline' }}
@@ -362,9 +473,8 @@ const FutsalUpdate = () => {
               checked={status == 0}
               onChange={handleChange}
             /><br></br>
-            {error && status.length === 0 ? (
-              <label className="create-error">invalid status</label>
-            ) : null
+            {error['status'] ?
+              <label className="create-error">{error.status}</label> : ''
             }
           </CCol>
           <CCol xs={12}>
