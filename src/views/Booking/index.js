@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { bookfutsal } from 'src/util/apiroutes';
 import {
   CCard,
   CCardBody,
@@ -34,7 +35,7 @@ const Bookings = () => {
   const fetchData = () => {
     const startIndex = (currentPage - 1) * recordsPerPage;
     const endIndex = startIndex + recordsPerPage;
-    fetch(`http://localhost:8001/books?_sort=id&_order=desc&_start=${startIndex}&_end=${endIndex}`)
+    fetch(`${bookfutsal}/books?_sort=id&_order=desc&_start=${startIndex}&_end=${endIndex}`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -48,7 +49,7 @@ const Bookings = () => {
  
 
   const handleDelete = (book) => {
-    fetch(`http://localhost:8001/books/${book.id}`, {
+    fetch(`${bookfutsal}/books/${book.id}`, {
       method: 'DELETE'
     })
       .then(() => {
@@ -60,22 +61,22 @@ const Bookings = () => {
       });
   };
 
-//   useEffect(() => {
-//     fetchTotalCount();
-//   }, []);
+  useEffect(() => {
+    fetchTotalCount();
+  }, []);
 
 
-//   const fetchTotalCount = () => {
-//     fetch('http://localhost:8000/details')
-//       .then((res) => res.headers.get('X-Total-Count'))
-//       .then((count) => {
-//         setTotalCount(count);
-//         setNPage(Math.ceil(count / recordsPerPage));
-//       })
-//       .catch((error) => {
-//         console.error('Error fetching total count:', error);
-//       });
-//   };
+  const fetchTotalCount = () => {
+    fetch(`${bookfutsal}/books`)
+      .then((res) => res.headers.get('X-Total-Count'))
+      .then((count) => {
+        setTotalCount(count);
+        setNPage(Math.ceil(count / recordsPerPage));
+      })
+      .catch((error) => {
+        console.error('Error fetching total count:', error);
+      });
+  };
 
   const prePage = () => {
     if (currentPage !== 1) {

@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { CButton, CCol, CForm, CFormCheck, CFormInput, CFormSelect, CCard } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
+import { addfusal, locationurl } from 'src/util/apiroutes'
 
 
 const FutsalCreate = () => {
@@ -8,8 +9,10 @@ const FutsalCreate = () => {
   const [owner, setOwner] = useState('')
   const [email, setEmail] = useState('')
   const [contact, setContact] = useState('')
-  const [province, setProvince] = useState('')
-  const [district, setDistrict] = useState('')
+  const [provinces, setProvinces] = useState([])
+  const [districts, setDistricts] = useState([])
+  const [selectedProvince, setSelectedProvince] = useState('');
+  const [selectedDistrict, setSelectedDistrict] = useState('');
   const [city, setCity] = useState('')
   const [street, setStreet] = useState('')
   const [pan, setPan] = useState('')
@@ -20,6 +23,47 @@ const FutsalCreate = () => {
   const [closingTime, setClosingTime] = useState('')
   const [error, setError] = useState([])
   const navigate = useNavigate()
+  
+  
+
+  const fetchProvinces = async () => {
+    try {
+      const response = await fetch(`${locationurl}/provinces`);
+      const data = await response.json();
+      setProvinces(data);
+    } catch (error) {
+      console.error('Error fetching provinces:', error);
+    }
+  };
+
+  const fetchDistricts = async (provinceId) => {
+    try {
+      const response = await fetch(`${locationurl}/districts?provinceId=${provinceId}`);
+      const data = await response.json();
+      setDistricts(data);
+    } catch (error) {
+      console.error('Error fetching districts:', error);
+    }
+  };
+  
+  
+
+  const handleProvinceChange = (event) => {
+    const selectedProvinceId = event.target.value;
+    setSelectedProvince(selectedProvinceId);
+    setSelectedDistrict('');
+
+    if (selectedProvinceId) {
+      fetchDistricts(selectedProvinceId);
+    } else {
+      setDistricts([]);
+    }
+  };
+
+  const handleDistrictChange = (event) => {
+    const selectedDistrictId = event.target.value;
+    setSelectedDistrict(selectedDistrictId);
+  };
 
   const onOptionChange = e => {
     setStatus(e.target.value)
@@ -39,6 +83,7 @@ const FutsalCreate = () => {
     setClosingTime(e.target.value);
   };
 
+
   const handleSubmit = (event) => {
     event.preventDefault()
     const detail = {
@@ -46,8 +91,8 @@ const FutsalCreate = () => {
       owner,
       email,
       contact,
-      province,
-      district,
+      province: selectedProvince,
+      district: selectedDistrict,
       city,
       street,
       pan,
@@ -66,7 +111,7 @@ const FutsalCreate = () => {
       setError({
         owner: "must be more than 3"
       })
-    } else if (!validateEmail === email) {
+    } else if (!validateEmail(email)) {
       setError({
         email: "invalid email"
       })
@@ -74,11 +119,11 @@ const FutsalCreate = () => {
       setError({
         contact: "it must be of 10 digit"
       })
-    } else if (province.length === 0) {
+    } else if (selectedProvince === "") {
       setError({
         province: "plz select province"
       })
-    } else if (district.length === 3) {
+    } else if (selectedDistrict === "") {
       setError({
         district: "plz select district"
       })
@@ -94,7 +139,11 @@ const FutsalCreate = () => {
       setError({
         pan: "invalid pan"
       })
-    } else if (ground.length === 0 ) {
+    } else if ( file === "") {
+      setError({
+        file: "invalid file"
+      })
+    } else if (ground.length === 0) {
       setError({
         ground: "invalid ground"
       })
@@ -112,7 +161,8 @@ const FutsalCreate = () => {
         ground: "plz enter number of ground"
       })
     } else {
-      fetch('http://localhost:8000/details', {
+      console.log(detail)
+      fetch(`${addfusal}/details`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(detail),
@@ -122,6 +172,11 @@ const FutsalCreate = () => {
       })
     }
   }
+
+  // options location
+  useEffect(() => {
+    fetchProvinces();
+  }, []);
 
   return (
     <div>
@@ -178,17 +233,16 @@ const FutsalCreate = () => {
           </CCol>
           <CCol xs={4}>
             <CFormSelect
-              id="inputState"
+              id="province"
               label="Province:"
-              value={province}
-              onChange={(e) => setProvince(e.target.value)}>
-              <option value="Bagmati">Bagmati</option>
-              <option value="Lumbini">Lumbini</option>
-              <option value="Gandaki">Gandaki</option>
-              <option value="Sudur_Pashchim">Sudur Pashchim</option>
-              <option value="Karnali">Karnali</option>
-              <option value="Madesh">Madesh</option>
-              <option value="Province-No-1">Province No. 1</option>
+              value={selectedProvince}
+              onChange={handleProvinceChange}>
+              <option value="">select province</option>
+              {provinces.map((province) => (
+                <option key={province.id} value={province.id}>
+                  {province.name}
+                </option>
+              ))}
             </CFormSelect>
             {error['province'] ?
               <label className="create-error">{error.province}</label> : ''
@@ -197,57 +251,17 @@ const FutsalCreate = () => {
 
           <CCol xs={4}>
             <CFormSelect
-              id="inputState"
+              id="district"
               label="District:"
-              value={district}
-              onChange={(e) => setDistrict(e.target.value)}>
-              <option value="Achham">Achham</option>
-              <option value="Arghakhanchi">Arghakhanchi</option>
-              <option value="Baglung">Baglung</option>
-              <option value="Baitadi">Baitadi</option>
-              <option value="Bajhang">Bajhang</option>
-              <option value="Bajura">Bajura</option>
-              <option value="Banke">Banke</option>
-              <option value="Bara">Bara</option>
-              <option value="Bardiya">Bardiya</option>
-              <option value="Bhaktapur">Bhaktapur</option>
-              <option value="Bhojpur">Bhojpur</option>
-              <option value="Chitwan">Chitwan</option>
-              <option value="Dadeldhura">Dadeldhura</option>
-              <option value="Dailekh">Dailekh</option>
-              <option value="Dang">Dang</option>
-              <option value="Darchula">Darchula</option>
-              <option value="Dhading">Dhading</option>
-              <option value="Dhankuta">Dhankuta</option>
-              <option value="Dhanusha">Dhanusha</option>
-              <option value="Dolakha">Dolakha</option>
-              <option value="Dolpa">Dolpa</option>
-              <option value="Doti">Doti</option>
-              <option value="Gorkha">Gorkha</option>
-              <option value="Gulmi">Gulmi</option>
-              <option value="Humla">Humla</option>
-              <option value="Ilam">Ilam</option>
-              <option value="Jajarkot">Jajarkot</option>
-              <option value="Jhapa">Jhapa</option>
-              <option value="Jumla">Jumla</option>
-              <option value="Kailali">Kailali</option>
-              <option value="Kalikot">Kalikot</option>
-              <option value="Kanchanpur">Kanchanpur</option>
-              <option value="Kapilvastu">Kapilvastu</option>
-              <option value="Kaski">Kaski</option>
-              <option value="Kathmandu">Kathmandu</option>
-              <option value="Kavrepalanchok">Kavrepalanchok</option>
-              <option value="Khotang">Khotang</option>
-              <option value="Lalitpur">Lalitpur</option>
-              <option value="Lamjung">Lamjung</option>
-              <option value="Mahottari">Mahottari</option>
-              <option value="Makwanpur">Makwanpur</option>
-              <option value="Manang">Manang</option>
-              <option value="Morang">Morang</option>
-              <option value="Mugu">Mugu</option>
-              <option value="Mustang">Mustang</option>
-              <option value="Myagdi">Myagdi</option>
-              <option value="Nawalparasi">Nawalparasi</option>
+              value={selectedDistrict}
+              onChange={handleDistrictChange}>
+              <option value="">select district</option>
+              {districts.map((district) => (
+                <option key={district.id} value={district.id}>
+                  {district.name}
+                </option>
+              ))}
+
             </CFormSelect>
             {error['district'] ?
               <label className="create-error">{error.district}</label> : ''

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { addfusal } from 'src/util/apiroutes';
 import {
   CCard,
   CCardBody,
@@ -32,7 +33,7 @@ const Futsals = () => {
   const fetchData = () => {
     const startIndex = (currentPage - 1) * recordsPerPage;
     const endIndex = startIndex + recordsPerPage;
-    fetch(`http://localhost:8000/details?_sort=id&_order=desc&_start=${startIndex}&_end=${endIndex}`)
+    fetch(`${addfusal}/details?_sort=id&_order=desc&_start=${startIndex}&_end=${endIndex}`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -46,7 +47,7 @@ const Futsals = () => {
  
 
   const handleDelete = (detail) => {
-    fetch(`http://localhost:8000/details/${detail.id}`, {
+    fetch(`${addfusal}/details/${detail.id}`, {
       method: 'DELETE'
     })
       .then(() => {
@@ -64,7 +65,7 @@ const Futsals = () => {
 
 
   const fetchTotalCount = () => {
-    fetch('http://localhost:8000/details')
+    fetch(`${addfusal}/details`)
       .then((res) => res.headers.get('X-Total-Count'))
       .then((count) => {
         setTotalCount(count);
