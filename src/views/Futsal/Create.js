@@ -143,6 +143,14 @@ const FutsalCreate = () => {
       setError({
         file: "invalid file"
       })
+    } else if (openingTime === '') {
+      setError({
+        openingTime: 'plz select',
+      });
+    } else if ( closingTime === "") {
+      setError({
+        closingTime: 'plz select '
+      })
     } else if (ground.length === 0) {
       setError({
         ground: "invalid ground"
@@ -151,11 +159,6 @@ const FutsalCreate = () => {
       setError({
         status: "plz select"
       })
-    } else if (openingTime === '' || closingTime === '') {
-      setError({
-        openingTime: 'Opening and closing time cannot be empty',
-        closingTime: 'Opening and closing time cannot be empty'
-      });
     } else if (ground.length === '') {
       setError({
         ground: "plz enter number of ground"

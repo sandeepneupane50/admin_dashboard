@@ -216,12 +216,15 @@ const FutsalUpdate = () => {
       setError({
         status: "plz select"
       })
-    } else if (openingTime === '' || closingTime === '') {
+    } else if (openingTime === '') {
       setError({
-        openingTime: 'Opening and closing time cannot be empty',
-        closingTime: 'Opening and closing time cannot be empty'
+        openingTime: 'plz select',
       });
-    } else if (ground.length === '') {
+    } else if ( closingTime === "") {
+      setError({
+        closingTime: 'plz select '
+      })
+    }  else if (ground.length === '') {
       setError({
         ground: "plz enter number of ground"
       })
