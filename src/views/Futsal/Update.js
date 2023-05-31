@@ -26,7 +26,8 @@ const FutsalUpdate = () => {
   const [districts, setDistricts] = useState([])
   const [selectedProvince, setSelectedProvince] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
-  const [city, setCity] = useState("");
+  const [cities, setCities] = useState([])
+  const [selectedCity, setSelectedCity] = useState('')
   const [street, setStreet] = useState("");
   const [pan, setPan] = useState("");
   const [file, setFile] = useState("");
@@ -62,27 +63,34 @@ const FutsalUpdate = () => {
   };
 
   const fetchProvinces = async () => {
-  try {
-    const response = await fetch(`${locationurl}/provinces`);
-    const data = await response.json();
-    setProvinces(data);
-    // setLoadedProvinces(true);
-  } catch (error) {
-    console.error('Error fetching provinces:', error);
-  }
-};
-
+    try {
+      const response = await fetch(`${locationurl}/provinces`);
+      const data = await response.json();
+      setProvinces(data);
+    } catch (error) {
+      console.error('Error fetching provinces:', error);
+    }
+  };
 
   const fetchDistricts = async (provinceId) => {
     try {
       const response = await fetch(`${locationurl}/districts?provinceId=${provinceId}`);
       const data = await response.json();
       setDistricts(data);
-      setSelectedDistrict(selectedDistrictId);
     } catch (error) {
       console.error('Error fetching districts:', error);
     }
   };
+
+  const fetchCities = async (districtId) => {
+    try {
+      const response = await fetch(`${locationurl}/cities?districtId=${districtId}`);
+      const data = await response.json();
+      setCities(data);
+    } catch (error) {
+      console.error('Error fetching districts:', error);
+    }
+  }   
   
 
   const handleProvinceChange = (event) => {
@@ -100,7 +108,35 @@ const FutsalUpdate = () => {
   const handleDistrictChange = (event) => {
     const selectedDistrictId = event.target.value;
     setSelectedDistrict(selectedDistrictId);
+    setSelectedCity('');
+
+    if (selectedDistrictId) {
+      fetchCities(selectedDistrictId);
+    } else {
+      setCities([]);
+    }
   };
+
+  const handleCityChange = (event) => {
+    const selectedCityName = event.target.value;
+    setSelectedCity(selectedCityName);
+  };
+
+
+
+      // options location
+      useEffect(() => {
+        fetchProvinces();
+        if (selectedProvince) {
+          fetchDistricts(selectedProvince);
+        }
+        if (selectedDistrict) {
+          fetchCities(selectedDistrict);
+        } else {
+          setCities([]);
+        }
+      }, [selectedProvince, selectedDistrict]);
+  
 
 
 
@@ -126,7 +162,7 @@ const FutsalUpdate = () => {
         setSelectedDistrict(value);
         break;
       case "city":
-        setCity(value);
+        setSelectedCity(value);
         break;
       case "street":
         setStreet(value);
@@ -154,15 +190,7 @@ const FutsalUpdate = () => {
     }
   };
 
-    // options location
-    useEffect(() => {
-      fetchProvinces()
-      if (selectedProvince) {
-        fetchDistricts(selectedProvince);
-      } else {
-        setDistricts([]);
-      }
-    }, [selectedProvince]);
+
     
 
   const handleSubmit = (event) => {
@@ -192,7 +220,7 @@ const FutsalUpdate = () => {
       setError({
         district: "plz select district"
       })
-    } else if (city.length < 3) {
+    } else if (selectedCity === "") {
       setError({
         city: "invalid city"
       })
@@ -236,7 +264,7 @@ const FutsalUpdate = () => {
         contact,
         province: selectedProvince,
         district: selectedDistrict,
-        city,
+        city: selectedCity,
         street,
         pan,
         file,
@@ -273,7 +301,7 @@ const FutsalUpdate = () => {
           setContact(detail.contact);
           setSelectedProvince(detail.province);
           setSelectedDistrict(detail.district);
-          setCity(detail.city);
+          setSelectedCity(detail.city);
           setStreet(detail.street);
           setPan(detail.pan);
           setFile(detail.file);
@@ -383,13 +411,19 @@ const FutsalUpdate = () => {
             }
           </CCol>
           <CCol md={4}>
-            <CFormInput
-              id="inputCity"
+          <CFormSelect
+              id="city"
               label="City:"
-              value={city}
-              onChange={handleChange}
-              name="city"
-            />
+              value={selectedCity}
+              onChange={handleCityChange}>
+              <option value="">select city</option>
+              {cities.map((city) => (
+                <option key={city.id} value={city.id}>
+                  {city.name}
+                </option>
+              ))}
+
+            </CFormSelect>
             {error['city'] ?
               <label className="create-error">{error.city}</label> : ''
             }

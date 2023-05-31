@@ -10,7 +10,8 @@ const BookingEdit = () => {
   const [districts, setDistricts] = useState([])
   const [selectedProvince, setSelectedProvince] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
-  const [city, setCity] = useState('')
+  const [cities, setCities] = useState([])
+  const [selectedCity, setSelectedCity] = useState('')
   const [futsalname, setFutsalname] = useState('')
   const [booktime, setBooktime] = useState('')
   const [status, setStatus] = useState('')
@@ -25,41 +26,76 @@ const BookingEdit = () => {
       const response = await fetch(`${locationurl}/provinces`);
       const data = await response.json();
       setProvinces(data);
-      // setLoadedProvinces(true);
     } catch (error) {
       console.error('Error fetching provinces:', error);
     }
   };
+
+  const fetchDistricts = async (provinceId) => {
+    try {
+      const response = await fetch(`${locationurl}/districts?provinceId=${provinceId}`);
+      const data = await response.json();
+      setDistricts(data);
+    } catch (error) {
+      console.error('Error fetching districts:', error);
+    }
+  };
+
+  const fetchCities = async (districtId) => {
+    try {
+      const response = await fetch(`${locationurl}/cities?districtId=${districtId}`);
+      const data = await response.json();
+      setCities(data);
+    } catch (error) {
+      console.error('Error fetching districts:', error);
+    }
+  }   
   
-  
-    const fetchDistricts = async (provinceId) => {
-      try {
-        const response = await fetch(`${locationurl}/districts?provinceId=${provinceId}`);
-        const data = await response.json();
-        setDistricts(data);
-        setSelectedDistrict(selectedDistrictId);
-      } catch (error) {
-        console.error('Error fetching districts:', error);
-      }
-    };
-    
-  
-    const handleProvinceChange = (event) => {
-      const selectedProvinceId = event.target.value;
-      setSelectedProvince(selectedProvinceId);
-      setSelectedDistrict('');
-  
-      if (selectedProvinceId) {
-        fetchDistricts(selectedProvinceId);
-      } else {
-        setDistricts([]);
-      }
-    };
-  
-    const handleDistrictChange = (event) => {
-      const selectedDistrictId = event.target.value;
-      setSelectedDistrict(selectedDistrictId);
-    };
+
+  const handleProvinceChange = (event) => {
+    const selectedProvinceId = event.target.value;
+    setSelectedProvince(selectedProvinceId);
+    setSelectedDistrict('');
+
+    if (selectedProvinceId) {
+      fetchDistricts(selectedProvinceId);
+    } else {
+      setDistricts([]);
+    }
+  };
+
+  const handleDistrictChange = (event) => {
+    const selectedDistrictId = event.target.value;
+    setSelectedDistrict(selectedDistrictId);
+    setSelectedCity('');
+
+    if (selectedDistrictId) {
+      fetchCities(selectedDistrictId);
+    } else {
+      setCities([]);
+    }
+  };
+
+  const handleCityChange = (event) => {
+    const selectedCityName = event.target.value;
+    setSelectedCity(selectedCityName);
+  };
+
+
+
+      // options location
+      useEffect(() => {
+        fetchProvinces();
+        if (selectedProvince) {
+          fetchDistricts(selectedProvince);
+        }
+        if (selectedDistrict) {
+          fetchCities(selectedDistrict);
+        } else {
+          setCities([]);
+        }
+      }, [selectedProvince, selectedDistrict]);
+
 
   const onOptionChange = e => {
     setStatus(e.target.value)
@@ -86,7 +122,7 @@ const BookingEdit = () => {
           setSelectedDistrict(value);
           break;
       case "city":
-        setCity(value);
+        setSelectedCity(value);
         break;
       case "futsalname":
         setFutsalname(value);
@@ -104,17 +140,8 @@ const BookingEdit = () => {
         break;
     }
   };
-  // options location
-    useEffect(() => {
-      fetchProvinces()
-      if (selectedProvince) {
-        fetchDistricts(selectedProvince);
-      } else {
-        setDistricts([]);
-      }
-    }, [selectedProvince]);
-  // handle submit
 
+  // handle submit
   const handleSubmit = (event) => {
     event.preventDefault();
     if (client.length < 3) {
@@ -133,7 +160,7 @@ const BookingEdit = () => {
       setError({
         district: "plz select district"
       })
-    } else if (city.length === 0) {
+    } else if (selectedCity === "") {
       setError({
         city: "enter city"
       })
@@ -163,7 +190,7 @@ const BookingEdit = () => {
         contact,
         province: selectedProvince,
         district: selectedDistrict,
-        city,
+        city: selectedCity,
         futsalname,
         booktime,
         ground,
@@ -196,7 +223,7 @@ const BookingEdit = () => {
           setContact(book.contact);
           setSelectedProvince(book.province);
           setSelectedDistrict(book.district);
-          setCity(book.city);
+          setSelectedCity(book.city);
           setFutsalname(book.futsalname);
           setBooktime(book.booktime);
           setGround(book.ground);
@@ -280,19 +307,24 @@ const BookingEdit = () => {
               <label className="create-error">{error.district}</label> : ''
             }
           </CCol>
-            <CCol md={4}>
-              <CFormInput
-                id="City"
-                label="City Name:"
-                name="city"
-                placeholder="City Name"
-                value={city}
-                onChange={handleChange}
-              />
-              {error['city'] ?
-                <label className="create-error">{error.city}</label> : ''
-              }
-            </CCol>
+          <CCol md={4}>
+          <CFormSelect
+              id="city"
+              label="City:"
+              value={selectedCity}
+              onChange={handleCityChange}>
+              <option value="">select city</option>
+              {cities.map((city) => (
+                <option key={city.id} value={city.id}>
+                  {city.name}
+                </option>
+              ))}
+
+            </CFormSelect>
+            {error['city'] ?
+              <label className="create-error">{error.city}</label> : ''
+            }
+          </CCol>
             <CCol xs={4}>
               <CFormInput
                 id="Futsalname"

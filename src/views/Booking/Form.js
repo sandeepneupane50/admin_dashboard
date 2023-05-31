@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { CButton, CCol, CForm, CFormCheck, CFormInput, CFormSelect, CCard } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
-import { bookfutsal, locationurl } from 'src/util/apiroutes'
+import { bookfutsal, locationurl, addfusal } from 'src/util/apiroutes'
 
 
 const BookingForm = () => {
@@ -11,8 +11,10 @@ const BookingForm = () => {
   const [districts, setDistricts] = useState([])
   const [selectedProvince, setSelectedProvince] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
-  const [city, setCity] = useState('')
-  const [futsalname, setFutsalname] = useState('')
+  const [cities, setCities] = useState([])
+  const [selectedCity, setSelectedCity] = useState('')
+  const [futsals, setFutsals] = useState([]);
+  const [selectedFutsal, setSelectedFutsal] = useState('');
   const [booktime, setBooktime] = useState('')
   const [status, setStatus] = useState('')
   const [ground, setGround] = useState('')
@@ -39,6 +41,27 @@ const BookingForm = () => {
       console.error('Error fetching districts:', error);
     }
   };
+
+  const fetchCities = async (districtId) => {
+    try {
+      const response = await fetch(`${locationurl}/cities?districtId=${districtId}`);
+      const data = await response.json();
+      setCities(data);
+    } catch (error) {
+      console.error('Error fetching districts:', error);
+    }
+  }
+
+  const fetchFutsals = async (cityId) => {
+    try {
+      const response = await fetch(`http://localhost:8000/details?city=${cityId}`);
+      const data = await response.json();
+      const companyNames = data.map((futsal) => ({ id : futsal.id, name : futsal.company}));
+      setFutsals(companyNames);
+    } catch (error) {
+      console.error('Error fetching futsals:', error);
+    }
+  };
   
   
 
@@ -55,9 +78,31 @@ const BookingForm = () => {
   };
 
   const handleDistrictChange = (event) => {
-    const selectedDistrictName = event.target.value;
-    setSelectedDistrict(selectedDistrictName);
+    const selectedDistrictId = event.target.value;
+    setSelectedDistrict(selectedDistrictId);
+    setSelectedCity('');
+
+    if (selectedDistrictId) {
+      fetchCities(selectedDistrictId);
+    }
   };
+
+  const handleCityChange = (event) => {
+    const selectedCityId = event.target.value;
+    setSelectedCity(selectedCityId);
+    setSelectedFutsal('');
+
+    if (selectedCityId) {
+      fetchFutsals(selectedCityId);
+    }
+  };
+
+  const handleFutsalChange = (event) => {
+    const selectedFutsalName = event.target.value;
+    setSelectedFutsal(selectedFutsalName);
+  };
+
+  
 
 
   const onOptionChange = e => {
@@ -76,8 +121,8 @@ const BookingForm = () => {
       contact,
       province: selectedProvince,
       district: selectedDistrict,
-      city,
-      futsalname,
+      city: selectedCity,
+      futsalname: selectedFutsal,
       booktime,
       ground,
       paymentmethod,
@@ -100,11 +145,11 @@ const BookingForm = () => {
       setError({
         district: "plz select district"
       })
-    } else if (city.length === 0) {
+    } else if (selectedCity === "") {
       setError({
         city: "enter city"
       })
-    } else if (futsalname.length < 3) {
+    } else if (selectedFutsal === "") {
       setError({
         company: "invalid city"
       })
@@ -139,6 +184,8 @@ const BookingForm = () => {
    // options location
    useEffect(() => {
     fetchProvinces();
+    fetchDistricts();
+    fetchCities();
   }, []);
 
 
@@ -209,25 +256,36 @@ const BookingForm = () => {
           </CCol>
 
           <CCol md={4}>
-            <CFormInput
-              id="inputCity"
+          <CFormSelect
+              id="city"
               label="City:"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            />
+              value={selectedCity}
+              onChange={handleCityChange}>
+              <option value="">select city</option>
+              {cities.map((city) => (
+                <option key={city.id} value={city.id}>
+                  {city.name}
+                </option>
+              ))}
+            </CFormSelect>
             {error['city'] ?
               <label className="create-error">{error.city}</label> : ''
             }
           </CCol>
-          <CCol xs={4}>
-            <CFormInput
-              id="Futsalname"
-              label="Futsal Name:"
-              placeholder="Futsal Name"
-              value={futsalname}
-              onChange={(e) => setFutsalname(e.target.value)}
-            />
-            {error.company ?
+          <CCol md={4}>
+          <CFormSelect
+              id="futsal"
+              label="Futsal:"
+              value={selectedFutsal}
+              onChange={handleFutsalChange}>
+              <option value="">select futsal</option>
+              {futsals.map((futsal) => (
+                <option key={futsal.id} value={futsal.id}>
+                  {futsal.name}
+                </option>
+              ))}
+            </CFormSelect>
+            {error['futsal'] ?
               <label className="create-error">{error.company}</label> : ''
             }
           </CCol>
