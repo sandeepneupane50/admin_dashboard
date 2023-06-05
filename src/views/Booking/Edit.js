@@ -1,25 +1,34 @@
-import React, { useState, useEffect } from 'react'
-import { CButton, CCol, CForm, CFormCheck, CFormInput, CFormSelect, CCard } from '@coreui/react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { bookfutsal, locationurl } from 'src/util/apiroutes'
+import React, { useState, useEffect } from 'react';
+import {
+  CButton,
+  CCol,
+  CForm,
+  CFormCheck,
+  CFormInput,
+  CFormSelect,
+  CCard
+} from '@coreui/react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { bookfutsal, locationurl } from 'src/util/apiroutes';
 
 const BookingEdit = () => {
-  const [client, setClient] = useState('')
-  const [contact, setContact] = useState('')
-  const [provinces, setProvinces] = useState([])
-  const [districts, setDistricts] = useState([])
+  const [client, setClient] = useState('');
+  const [contact, setContact] = useState('');
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
   const [selectedProvince, setSelectedProvince] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
-  const [cities, setCities] = useState([])
-  const [selectedCity, setSelectedCity] = useState('')
-  const [futsalname, setFutsalname] = useState('')
-  const [booktime, setBooktime] = useState('')
-  const [status, setStatus] = useState('')
-  const [ground, setGround] = useState('')
-  const [paymentmethod, setPaymentmethod] = useState('')
+  const [cities, setCities] = useState([]);
+  const [selectedCity, setSelectedCity] = useState('');
+  const [futsalname, setFutsalname] = useState('');
+  const [bookdate, setBookdate] = useState('');
+  const [status, setStatus] = useState('');
+  const [ground, setGround] = useState('');
+  const [paymentmethod, setPaymentmethod] = useState('');
   const [error, setError] = useState(false);
   const [data, setData] = useState([]);
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const fetchProvinces = async () => {
     try {
@@ -47,15 +56,15 @@ const BookingEdit = () => {
       const data = await response.json();
       setCities(data);
     } catch (error) {
-      console.error('Error fetching districts:', error);
+      console.error('Error fetching cities:', error);
     }
-  }   
-  
+  };
 
   const handleProvinceChange = (event) => {
     const selectedProvinceId = event.target.value;
     setSelectedProvince(selectedProvinceId);
     setSelectedDistrict('');
+    setSelectedCity('');
 
     if (selectedProvinceId) {
       fetchDistricts(selectedProvinceId);
@@ -81,30 +90,42 @@ const BookingEdit = () => {
     setSelectedCity(selectedCityName);
   };
 
-
-
-      // options location
-      useEffect(() => {
-        fetchProvinces();
-        if (selectedProvince) {
-          fetchDistricts(selectedProvince);
-        }
-        if (selectedDistrict) {
-          fetchCities(selectedDistrict);
-        } else {
-          setCities([]);
-        }
-      }, [selectedProvince, selectedDistrict]);
-
-
   const onOptionChange = e => {
     setStatus(e.target.value)
-    console.log(status)
   }
 
-  const handleBookTime = (e) => {
-    setBooktime(e.target.value);
+  const handleBookDate = (e) => {
+    setBookdate(e.target.value);
   };
+
+  useEffect(() => {
+    fetchProvinces();
+    fetchDistricts(selectedProvince);
+    fetchCities(selectedDistrict);
+  }, []);
+
+  useEffect(() => {
+    fetch(`${bookfutsal}/books?id=${id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.length > 0) {
+          const book = data[0];
+          setClient(book.client);
+          setContact(book.contact);
+          setSelectedProvince(book.province);
+          setSelectedDistrict(book.district);
+          setSelectedCity(book.city);
+          setFutsalname(book.futsalname);
+          setBookdate(book.bookdate);
+          setStatus(book.status);
+          setGround(book.ground);
+          setPaymentmethod(book.paymentmethod);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching book:', error);
+      });
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -115,17 +136,20 @@ const BookingEdit = () => {
       case "contact":
         setContact(value)
         break;
-        case "province":
-          setSelectedProvince(value);
-          break;
-        case "district":
-          setSelectedDistrict(value);
-          break;
+      case "province":
+        setSelectedProvince(value);
+        break;
+      case "district":
+        setSelectedDistrict(value);
+        break;
       case "city":
         setSelectedCity(value);
         break;
       case "futsalname":
         setFutsalname(value);
+        break;
+      case "bookdate":
+        setBookdate(value);
         break;
       case "status":
         setStatus(value);
@@ -141,101 +165,42 @@ const BookingEdit = () => {
     }
   };
 
-  // handle submit
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (client.length < 3) {
-      setError({
-        client: "invalid name"
-      })
-    } else if (contact.length != 10) {
-      setError({
-        contact: "it must be of 10 digit"
-      })
-    } else if (selectedProvince === "") {
-      setError({
-        province: "plz select province"
-      })
-    } else if (selectedDistrict === "") {
-      setError({
-        district: "plz select district"
-      })
-    } else if (selectedCity === "") {
-      setError({
-        city: "enter city"
-      })
-    } else if (futsalname.length < 3) {
-      setError({
-        futsalname: "invalid city"
-      })
-    } else if (booktime === '') {
-      setError({
-        booktime: 'plz select time',
-      });
-    } else if (ground.length === 0) {
-      setError({
-        ground: "invalid ground"
-      })
-    } else if (paymentmethod === '') {
-      setError({
-        paymentmethod: "plz select payment type"
-      })
-    } else if (status == '') {
-      setError({
-        status: "plz select"
-      })
-    } else {
-      const updatedData = {
-        client,
-        contact,
-        province: selectedProvince,
-        district: selectedDistrict,
-        city: selectedCity,
-        futsalname,
-        booktime,
-        ground,
-        paymentmethod,
-        status,
-      };
 
-      fetch(`${bookfutsal}/books/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedData),
-      })
-        .then(() => {
-          alert("Successfully updated..");
-          navigate("/bookings");
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const bookData = {
+      client,
+      contact,
+      province: selectedProvince,
+      district: selectedDistrict,
+      city: selectedCity,
+      futsalname,
+      bookdate,
+      status,
+      ground,
+      paymentmethod
+    };
+
+    try {
+      const response = await fetch(`${bookfutsal}/books/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bookData)
+      });
+
+      if (response.ok) {
+        navigate('/bookings');
+      } else {
+        setError(true);
+      }
+    } catch (error) {
+      console.error('Error updating book:', error);
+      setError(true);
     }
   };
-  const { id } = useParams();
-  useEffect(() => {
-    fetch(`${bookfutsal}/books?id=${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.length > 0) {
-          const book = data[0];
-          setClient(book.client);
-          setContact(book.contact);
-          setSelectedProvince(book.province);
-          setSelectedDistrict(book.district);
-          setSelectedCity(book.city);
-          setFutsalname(book.futsalname);
-          setBooktime(book.booktime);
-          setGround(book.ground);
-          setPaymentmethod(book.paymentmethod);
-          setStatus(book.status);
-          setData(data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  }, [id]);
 
 
 
@@ -340,15 +305,15 @@ const BookingEdit = () => {
             </CCol>
             <CCol xs={4}>
               <CFormInput
-                label="Booking Time:"
-                type="time"
-                id="bookime"
-                name="booktime"
-                value={booktime}
-                onChange={handleBookTime}
+                label="Booking Date:"
+                type="date"
+                id="bookdate"
+                name="bookdate"
+                value={bookdate}
+                onChange={handleBookDate}
               />
-              {error['booktime'] ?
-                <label className="create-error">{error.booktime}</label> : ''
+              {error['bookdate'] ?
+                <label className="create-error">{error.bookdate}</label> : ''
               }
             </CCol>
             <CCol md={4}>

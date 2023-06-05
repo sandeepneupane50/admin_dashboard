@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { addfusal } from 'src/util/apiroutes';
+import { addfusal, locationurl } from 'src/util/apiroutes';
 import {
   CCard,
   CCardBody,
@@ -36,7 +36,6 @@ const Futsals = () => {
     fetch(`${addfusal}/details?_sort=id&_order=desc&_start=${startIndex}&_end=${endIndex}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setDetails(data);
       })
       .catch((error) => {
@@ -94,6 +93,7 @@ const Futsals = () => {
   
 
   const numbers = [...Array(npage).keys()].map((n) => n + 1);
+
 
   return (
     <div>

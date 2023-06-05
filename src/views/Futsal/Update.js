@@ -33,6 +33,7 @@ const FutsalUpdate = () => {
   const [file, setFile] = useState("");
   const [openingTime, setOpeningTime] = useState('')
   const [closingTime, setClosingTime] = useState('')
+  const [timeSlots, setTimeSlots] = useState([])
   const [ground, setGround] = useState('')
   const [status, setStatus] = useState("");
   const [error, setError] = useState(false);
@@ -136,6 +137,32 @@ const FutsalUpdate = () => {
           setCities([]);
         }
       }, [selectedProvince, selectedDistrict]);
+
+      // timeslots
+
+      const parseTime = (timeString) => {
+        const [hours, minutes] = timeString.split(':');
+        return new Date().setHours(hours, minutes, 0, 0);
+      };
+    
+      const formatTime = (time) => {
+        const hours = time.getHours().toString().padStart(2, '0');
+        const minutes = time.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+      };
+    
+      const generateTimeSlots = (startTime, endTime) => {
+        const slots = [];
+        let currentSlotStart = startTime;
+        while (currentSlotStart < endTime) {
+          const slotStart = formatTime(new Date(currentSlotStart));
+          const slotEnd = formatTime(new Date(currentSlotStart + 59 * 60000)); // Add 59 minutes
+          slots.push(`${slotStart}-${slotEnd}`);
+          currentSlotStart += 60 * 60000; // Increment by 1 hour
+        }
+        return slots;
+      };
+    
   
 
 
@@ -184,7 +211,10 @@ const FutsalUpdate = () => {
         break;
       case "status":
         setStatus(value);
-        break;  
+        break;
+      case "timeSlots":
+        setTimeSlots(value);
+        break;
       default:
         break;
     }
@@ -272,12 +302,30 @@ const FutsalUpdate = () => {
         closingTime,
         ground,
         status,
+        timeSlots,
       };
+
+      // Generate time slots
+      const startTime = parseTime(openingTime);
+      const endTime = parseTime(closingTime);
+
+      let start = new Date(startTime);
+      const end = new Date(endTime);
+
+      const slots = generateTimeSlots(startTime, endTime);
+
+
+      // Assign time slots to detail object
+      const updatedDetail = {
+        ...updatedData,
+        timeSlots: slots,
+      };
+      setTimeSlots(slots);
 
       fetch(`${addfusal}/details/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedData),
+        body: JSON.stringify(updatedDetail),
       })
         .then(() => {
           alert("Successfully updated..");

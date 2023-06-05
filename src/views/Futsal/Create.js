@@ -20,12 +20,14 @@ const FutsalCreate = () => {
   const [file, setFile] = useState('')
   const [status, setStatus] = useState('')
   const [openingTime, setOpeningTime] = useState('')
-  const [ground, setGround] = useState('')
   const [closingTime, setClosingTime] = useState('')
+  const [timeSlots, setTimeSlots] = useState([])
+  const [ground, setGround] = useState('')
+
   const [error, setError] = useState([])
   const navigate = useNavigate()
-  
-  
+
+
 
   const fetchProvinces = async () => {
     try {
@@ -55,8 +57,8 @@ const FutsalCreate = () => {
     } catch (error) {
       console.error('Error fetching districts:', error);
     }
-  }   
-  
+  }
+
 
   const handleProvinceChange = (event) => {
     const selectedProvinceId = event.target.value;
@@ -88,7 +90,6 @@ const FutsalCreate = () => {
 
   const onOptionChange = e => {
     setStatus(e.target.value)
-    console.log(status)
   }
 
   const validateEmail = (email) => {
@@ -102,6 +103,29 @@ const FutsalCreate = () => {
 
   const handleClosingTimeChange = (e) => {
     setClosingTime(e.target.value);
+  };
+
+  const parseTime = (timeString) => {
+    const [hours, minutes] = timeString.split(':');
+    return new Date().setHours(hours, minutes, 0, 0);
+  };
+
+  const formatTime = (time) => {
+    const hours = time.getHours().toString().padStart(2, '0');
+    const minutes = time.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
+  const generateTimeSlots = (startTime, endTime) => {
+    const slots = [];
+    let currentSlotStart = startTime;
+    while (currentSlotStart < endTime) {
+      const slotStart = formatTime(new Date(currentSlotStart));
+      const slotEnd = formatTime(new Date(currentSlotStart + 59 * 60000)); // Add 59 minutes
+      slots.push(`${slotStart}-${slotEnd}`);
+      currentSlotStart += 60 * 60000; // Increment by 1 hour
+    }
+    return slots;
   };
 
 
@@ -122,6 +146,7 @@ const FutsalCreate = () => {
       closingTime,
       ground,
       status,
+      timeSlots,
     }
 
     if (company.length < 3) {
@@ -160,7 +185,7 @@ const FutsalCreate = () => {
       setError({
         pan: "invalid pan"
       })
-    } else if ( file === "") {
+    } else if (file === "") {
       setError({
         file: "invalid file"
       })
@@ -168,7 +193,7 @@ const FutsalCreate = () => {
       setError({
         openingTime: 'plz select',
       });
-    } else if ( closingTime === "") {
+    } else if (closingTime === "") {
       setError({
         closingTime: 'plz select '
       })
@@ -185,16 +210,40 @@ const FutsalCreate = () => {
         ground: "plz enter number of ground"
       })
     } else {
-      console.log(detail)
+      // Generate time slots
+      const startTime = parseTime(openingTime);
+      const endTime = parseTime(closingTime);
+
+      let start = new Date(startTime);
+      const end = new Date(endTime);
+
+      const slots = generateTimeSlots(startTime, endTime);
+
+      while (start < end) {
+        const slotStart = formatTime(start);
+        start.setHours(start.getHours() + 1);
+        const slotEnd = formatTime(start);
+        slots.push(`${slotStart}-${slotEnd}`);
+      }
+
+      // Assign time slots to detail object
+      const updatedDetail = {
+        ...detail,
+        timeSlots: slots,
+      };
+      setTimeSlots(slots);
+
       fetch(`${addfusal}/details`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(detail),
-      }).then(() => {
-        alert('sucessfully submitted..'),
-          navigate('/futsals')
+        body: JSON.stringify(updatedDetail),
+      }).then((response) => {
+        navigate('/futsals')
+
       })
     }
+
+
   }
 
   // options location
@@ -294,7 +343,7 @@ const FutsalCreate = () => {
           </CCol>
 
           <CCol md={4}>
-          <CFormSelect
+            <CFormSelect
               id="city"
               label="City:"
               value={selectedCity}

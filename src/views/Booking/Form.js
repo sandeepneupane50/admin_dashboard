@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { CButton, CCol, CForm, CFormCheck, CFormInput, CFormSelect, CCard } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
-import { bookfutsal, locationurl, addfusal } from 'src/util/apiroutes'
+import { bookfutsal, locationurl } from 'src/util/apiroutes'
 
 
 const BookingForm = () => {
@@ -15,7 +15,7 @@ const BookingForm = () => {
   const [selectedCity, setSelectedCity] = useState('')
   const [futsals, setFutsals] = useState([]);
   const [selectedFutsal, setSelectedFutsal] = useState('');
-  const [booktime, setBooktime] = useState('')
+  const [bookdate, setBookDate] = useState('')
   const [status, setStatus] = useState('')
   const [ground, setGround] = useState('')
   const [paymentmethod, setPaymentmethod] = useState('')
@@ -107,11 +107,10 @@ const BookingForm = () => {
 
   const onOptionChange = e => {
     setStatus(e.target.value)
-    console.log(status)
   }
 
-  const handleBookTime = (e) => {
-    setBooktime(e.target.value);
+  const handleBookDate = (e) => {
+    setBookDate(e.target.value);
   };
 
   const handleSubmit = (event) => {
@@ -123,7 +122,7 @@ const BookingForm = () => {
       district: selectedDistrict,
       city: selectedCity,
       futsalname: selectedFutsal,
-      booktime,
+      bookdate,
       ground,
       paymentmethod,
       status,
@@ -153,9 +152,9 @@ const BookingForm = () => {
       setError({
         company: "invalid city"
       })
-    } else if (booktime === '') {
+    } else if (bookdate === '') {
       setError({
-        booktime: 'plz select time',
+        bookdate: 'plz select time',
       });
     } else if (ground.length === 0) {
       setError({
@@ -291,14 +290,14 @@ const BookingForm = () => {
           </CCol>
           <CCol xs={4}>
             <CFormInput
-              label="Booking Time:"
-              type="time"
+              label="Booking Date:"
+              type="date"
               id="bookime"
-              value={booktime}
-              onChange={handleBookTime}
+              value={bookdate}
+              onChange={handleBookDate}
             />
-            {error['booktime'] ?
-              <label className="create-error">{error.booktime}</label> : ''
+            {error['bookdate'] ?
+              <label className="create-error">{error.bookdate}</label> : ''
             }
           </CCol>
           <CCol md={4}>

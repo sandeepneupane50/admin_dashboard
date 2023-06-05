@@ -38,7 +38,6 @@ const Bookings = () => {
     fetch(`${bookfutsal}/books?_sort=id&_order=desc&_start=${startIndex}&_end=${endIndex}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setBooks(data);
       })
       .catch((error) => {
