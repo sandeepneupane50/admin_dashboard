@@ -12,13 +12,13 @@ import {
 } from "@coreui/react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { addfusal, locationurl } from "src/util/apiroutes";
+import { addFusal, locationUrl } from "src/util/apiroutes";
 
 
 
 const FutsalUpdate = () => {
 
-  const [company, setCompany] = useState("");
+  const [futsal, setFutsal] = useState("");
   const [owner, setOwner] = useState("");
   const [email, setEmail] = useState("");
   const [contact, setContact] = useState("");
@@ -65,7 +65,7 @@ const FutsalUpdate = () => {
 
   const fetchProvinces = async () => {
     try {
-      const response = await fetch(`${locationurl}/provinces`);
+      const response = await fetch(`${locationUrl}/provinces`);
       const data = await response.json();
       setProvinces(data);
     } catch (error) {
@@ -75,7 +75,7 @@ const FutsalUpdate = () => {
 
   const fetchDistricts = async (provinceId) => {
     try {
-      const response = await fetch(`${locationurl}/districts?provinceId=${provinceId}`);
+      const response = await fetch(`${locationUrl}/districts?provinceId=${provinceId}`);
       const data = await response.json();
       setDistricts(data);
     } catch (error) {
@@ -85,14 +85,14 @@ const FutsalUpdate = () => {
 
   const fetchCities = async (districtId) => {
     try {
-      const response = await fetch(`${locationurl}/cities?districtId=${districtId}`);
+      const response = await fetch(`${locationUrl}/cities?districtId=${districtId}`);
       const data = await response.json();
       setCities(data);
     } catch (error) {
       console.error('Error fetching districts:', error);
     }
-  }   
-  
+  }
+
 
   const handleProvinceChange = (event) => {
     const selectedProvinceId = event.target.value;
@@ -125,53 +125,55 @@ const FutsalUpdate = () => {
 
 
 
-      // options location
-      useEffect(() => {
-        fetchProvinces();
-        if (selectedProvince) {
-          fetchDistricts(selectedProvince);
-        }
-        if (selectedDistrict) {
-          fetchCities(selectedDistrict);
-        } else {
-          setCities([]);
-        }
-      }, [selectedProvince, selectedDistrict]);
+  // options location
+  useEffect(() => {
+    fetchProvinces();
+    if (selectedProvince) {
+      fetchDistricts(selectedProvince);
+    }
+    if (selectedDistrict) {
+      fetchCities(selectedDistrict);
+    } else {
+      setCities([]);
+    }
+  }, [selectedProvince, selectedDistrict]);
 
-      // timeslots
+  // timeslots
 
-      const parseTime = (timeString) => {
-        const [hours, minutes] = timeString.split(':');
-        return new Date().setHours(hours, minutes, 0, 0);
-      };
-    
-      const formatTime = (time) => {
-        const hours = time.getHours().toString().padStart(2, '0');
-        const minutes = time.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${minutes}`;
-      };
-    
-      const generateTimeSlots = (startTime, endTime) => {
-        const slots = [];
-        let currentSlotStart = startTime;
-        while (currentSlotStart < endTime) {
-          const slotStart = formatTime(new Date(currentSlotStart));
-          const slotEnd = formatTime(new Date(currentSlotStart + 59 * 60000)); // Add 59 minutes
-          slots.push(`${slotStart}-${slotEnd}`);
-          currentSlotStart += 60 * 60000; // Increment by 1 hour
-        }
-        return slots;
-      };
-    
-  
+  const parseTime = (timeString) => {
+    const [hours, minutes] = timeString.split(':');
+    return new Date().setHours(hours, minutes, 0, 0);
+  };
+
+  const formatTime = (time) => {
+    const hours = time.getHours().toString().padStart(2, '0');
+    const minutes = time.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
+  const generateTimeSlots = (startTime, endTime) => {
+    const slots = [];
+    let start = new Date(startTime);
+
+    while (start < endTime) {
+      const slotStart = formatTime(start);
+      start.setHours(start.getHours() + 1);
+      const slotEnd = formatTime(start);
+      slots.push(`${slotStart}-${slotEnd}`);
+    }
+
+    return slots;
+  };
+
+
 
 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     switch (name) {
-      case "company":
-        setCompany(value);
+      case "futsal":
+        setFutsal(value);
         break;
       case "owner":
         setOwner(value);
@@ -221,14 +223,14 @@ const FutsalUpdate = () => {
   };
 
 
-    
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (company.length < 3) {
+    if (futsal.length < 3) {
       setError({
-        company: "invalid name"
+        futsal: "invalid name"
       })
     } else if (owner.length < 3) {
       setError({
@@ -262,11 +264,11 @@ const FutsalUpdate = () => {
       setError({
         pan: "invalid pan"
       })
-    }  else if ( file === "") {
+    } else if (file === "") {
       setError({
         file: "invalid file"
       })
-    } else if (ground.length === 0 ) {
+    } else if (ground.length === 0) {
       setError({
         ground: "invalid ground"
       })
@@ -278,17 +280,17 @@ const FutsalUpdate = () => {
       setError({
         openingTime: 'plz select',
       });
-    } else if ( closingTime === "") {
+    } else if (closingTime === "") {
       setError({
         closingTime: 'plz select '
       })
-    }  else if (ground.length === '') {
+    } else if (ground.length === '') {
       setError({
         ground: "plz enter number of ground"
       })
     } else {
       const updatedData = {
-        company,
+        futsal,
         owner,
         email,
         contact,
@@ -309,11 +311,8 @@ const FutsalUpdate = () => {
       const startTime = parseTime(openingTime);
       const endTime = parseTime(closingTime);
 
-      let start = new Date(startTime);
-      const end = new Date(endTime);
 
       const slots = generateTimeSlots(startTime, endTime);
-
 
       // Assign time slots to detail object
       const updatedDetail = {
@@ -322,7 +321,7 @@ const FutsalUpdate = () => {
       };
       setTimeSlots(slots);
 
-      fetch(`${addfusal}/details/${id}`, {
+      fetch(`${addFusal}/details/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedDetail),
@@ -338,12 +337,12 @@ const FutsalUpdate = () => {
   };
   const { id } = useParams();
   useEffect(() => {
-    fetch(`${addfusal}/details?id=${id}`)
+    fetch(`${addFusal}/details?id=${id}`)
       .then((response) => response.json())
       .then((data) => {
         if (data.length > 0) {
           const detail = data[0];
-          setCompany(detail.company);
+          setFutsal(detail.futsal);
           setOwner(detail.owner);
           setEmail(detail.email);
           setContact(detail.contact);
@@ -372,15 +371,15 @@ const FutsalUpdate = () => {
           <CCol xs={6}>
             <CFormInput
               id="Name"
-              label="Company Name:"
-              placeholder="Futsal Company Name"
-              value={company}
-              name="company"
+              label="Futsal Name:"
+              placeholder="Futsal Name"
+              value={futsal}
+              name="futsal"
               onChange={handleChange}
 
             />
-             {error.company ?
-              <label className="create-error">{error.company}</label> : ''
+            {error.futsal ?
+              <label className="create-error">{error.futsal}</label> : ''
             }
           </CCol>
 
@@ -459,7 +458,7 @@ const FutsalUpdate = () => {
             }
           </CCol>
           <CCol md={4}>
-          <CFormSelect
+            <CFormSelect
               id="city"
               label="City:"
               value={selectedCity}
@@ -540,7 +539,7 @@ const FutsalUpdate = () => {
             }
           </CCol>
 
-           
+
           <CCol md={2}>
             <CFormInput
               type="number"

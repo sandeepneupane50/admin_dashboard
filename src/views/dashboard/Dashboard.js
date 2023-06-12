@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react'
 import { Link } from 'react-router-dom';
 import { CCard, CCardBody, CCardTitle, CCardText, CButton, CLink } from '@coreui/react'
+import { addFusal } from 'src/util/apiroutes';
 
 const Dashboard = () => {
 
   const [details, setDetails] = useState([]);
   useEffect(() => {
-    fetch('http://localhost:8000/details')
+    fetch(`${addFusal}/details`)
       .then(res => {
         return res.json()
       })

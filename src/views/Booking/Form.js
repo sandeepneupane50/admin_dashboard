@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { CButton, CCol, CForm, CFormCheck, CFormInput, CFormSelect, CCard } from '@coreui/react'
-import { useNavigate } from 'react-router-dom'
-import { bookfutsal, locationurl } from 'src/util/apiroutes'
+import { json, useNavigate } from 'react-router-dom'
+import { bookFutsal, locationUrl, addFusal } from 'src/util/apiroutes'
+import Select from 'react-select'
 
 
 const BookingForm = () => {
@@ -16,15 +17,21 @@ const BookingForm = () => {
   const [futsals, setFutsals] = useState([]);
   const [selectedFutsal, setSelectedFutsal] = useState('');
   const [bookdate, setBookDate] = useState('')
+  // timeslots
+  const [slots, setSlots] = useState([])
+  const [selectedSlots, setSelectedSlots] = useState([])
   const [status, setStatus] = useState('')
   const [ground, setGround] = useState('')
   const [paymentmethod, setPaymentmethod] = useState('')
   const [error, setError] = useState([])
+
+  // fetching bookedslots
+  const [bookedSlots, setBookedSlots] = useState([]);
   const navigate = useNavigate()
 
   const fetchProvinces = async () => {
     try {
-      const response = await fetch(`${locationurl}/provinces`);
+      const response = await fetch(`${locationUrl}/provinces`);
       const data = await response.json();
       setProvinces(data);
     } catch (error) {
@@ -34,7 +41,7 @@ const BookingForm = () => {
 
   const fetchDistricts = async (provinceId) => {
     try {
-      const response = await fetch(`${locationurl}/districts?provinceId=${provinceId}`);
+      const response = await fetch(`${locationUrl}/districts?provinceId=${provinceId}`);
       const data = await response.json();
       setDistricts(data);
     } catch (error) {
@@ -44,7 +51,7 @@ const BookingForm = () => {
 
   const fetchCities = async (districtId) => {
     try {
-      const response = await fetch(`${locationurl}/cities?districtId=${districtId}`);
+      const response = await fetch(`${locationUrl}/cities?districtId=${districtId}`);
       const data = await response.json();
       setCities(data);
     } catch (error) {
@@ -54,22 +61,33 @@ const BookingForm = () => {
 
   const fetchFutsals = async (cityId) => {
     try {
-      const response = await fetch(`http://localhost:8000/details?city=${cityId}`);
+      const response = await fetch(`${addFusal}/details?city=${cityId}`);
       const data = await response.json();
-      const companyNames = data.map((futsal) => ({ id : futsal.id, name : futsal.company}));
-      setFutsals(companyNames);
+      const futsalNames = data.map((futsal) => ({ id: futsal.id, name: futsal.futsal }));
+      setFutsals(futsalNames);
     } catch (error) {
       console.error('Error fetching futsals:', error);
     }
   };
   
-  
+
+  // fetching timeslots
+  const fetchSlots = async (selectedFutsal) => {
+    try {
+      const response = await fetch(`${addFusal}/details?id=${selectedFutsal}`)
+      const data = await response.json();
+      const timeSlots = data[0]['timeSlots'];
+      setSlots(timeSlots);
+    } catch (error) {
+      console.error('Error fetching timeSlots:', error);
+    }
+  };
 
   const handleProvinceChange = (event) => {
     const selectedProvinceId = event.target.value;
     setSelectedProvince(selectedProvinceId);
     setSelectedDistrict('');
-
+  
     if (selectedProvinceId) {
       fetchDistricts(selectedProvinceId);
     } else {
@@ -91,27 +109,56 @@ const BookingForm = () => {
     const selectedCityId = event.target.value;
     setSelectedCity(selectedCityId);
     setSelectedFutsal('');
-
+  
     if (selectedCityId) {
       fetchFutsals(selectedCityId);
+    } else {
+      setFutsals([]);
     }
   };
-
-  const handleFutsalChange = (event) => {
-    const selectedFutsalName = event.target.value;
-    setSelectedFutsal(selectedFutsalName);
-  };
-
+  
   
 
+  const handleFutsalChange = (event) => {
+    const selectedFutsalId = event.target.value;
+    setSelectedFutsal(selectedFutsalId);
+    setSelectedSlots('');
+
+    if (selectedFutsalId) {
+      fetchSlots(selectedFutsalId);
+    }
+  }
+
+  const handleBookDate = async (e) => {
+    setBookDate(e.target.value);
+
+    //fetching bookedslots 
+    // const fetchBookSlots = async () => {
+      const response = await fetch(`${bookFutsal}/books?futsal=${selectedFutsal}&bookdate=${bookdate}`);
+      const data = await response.json();
+      console.log(data);
+    // }
+  }
+
+
+  const slotOptions = () => {
+    return (slots.map(slot => ({value: slot,label: slot})))
+  }
+
+
+  const onSlotsChange = (value) => {
+    setSelectedSlots(value);
+    }
 
   const onOptionChange = e => {
     setStatus(e.target.value)
   }
 
-  const handleBookDate = (e) => {
-    setBookDate(e.target.value);
-  };
+  useEffect(() => {
+    fetchProvinces();
+  }, []);
+
+
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -123,6 +170,7 @@ const BookingForm = () => {
       city: selectedCity,
       futsalname: selectedFutsal,
       bookdate,
+      slots: selectedSlots,
       ground,
       paymentmethod,
       status,
@@ -156,7 +204,13 @@ const BookingForm = () => {
       setError({
         bookdate: 'plz select time',
       });
-    } else if (ground.length === 0) {
+    } 
+    else if (selectedSlots === "") {
+      setError({
+        slot: "plz select"
+      })
+    }
+     else if (ground.length === 0) {
       setError({
         ground: "invalid ground"
       })
@@ -169,24 +223,16 @@ const BookingForm = () => {
         status: "plz select"
       })
     } else {
-      fetch(`${bookfutsal}/books`, {
+      fetch(`${bookFutsal}/books`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(book),
       }).then(() => {
         alert('sucessfully submitted..')
-          navigate('/bookings')
+        navigate('/bookings')
       })
     }
   }
-
-   // options location
-   useEffect(() => {
-    fetchProvinces();
-    fetchDistricts();
-    fetchCities();
-  }, []);
-
 
   return (
     <div>
@@ -255,7 +301,7 @@ const BookingForm = () => {
           </CCol>
 
           <CCol md={4}>
-          <CFormSelect
+            <CFormSelect
               id="city"
               label="City:"
               value={selectedCity}
@@ -272,11 +318,12 @@ const BookingForm = () => {
             }
           </CCol>
           <CCol md={4}>
-          <CFormSelect
+            <CFormSelect
               id="futsal"
               label="Futsal:"
               value={selectedFutsal}
-              onChange={handleFutsalChange}>
+              onChange={handleFutsalChange}
+              disabled={futsals.length === 0}>
               <option value="">select futsal</option>
               {futsals.map((futsal) => (
                 <option key={futsal.id} value={futsal.id}>
@@ -285,7 +332,7 @@ const BookingForm = () => {
               ))}
             </CFormSelect>
             {error['futsal'] ?
-              <label className="create-error">{error.company}</label> : ''
+              <label className="create-error">{error.futsal}</label> : ''
             }
           </CCol>
           <CCol xs={4}>
@@ -299,6 +346,23 @@ const BookingForm = () => {
             {error['bookdate'] ?
               <label className="create-error">{error.bookdate}</label> : ''
             }
+          </CCol>
+          <CCol xs={4}>
+            <label>Time Slots:</label>
+            <Select
+             isMulti
+             name="colors"
+             options={slotOptions()} 
+             className="basic-multi-select" 
+             classNamePrefix="select" 
+             disabled={slots.length === 0}
+             value={selectedSlots}
+             onChange={onSlotsChange}
+              >
+            </Select>
+            {error['slot'] ? (
+              <label className="create-error">{error.slot}</label>
+            ) : null}
           </CCol>
           <CCol md={4}>
             <CFormInput
@@ -318,7 +382,7 @@ const BookingForm = () => {
               label="Payment Method:"
               value={paymentmethod}
               onChange={(e) => setPaymentmethod(e.target.value)}>
-              <option value="">payment type..</option>  
+              <option value="">payment type..</option>
               <option value="Cash">Handcash</option>
               <option value="Esewa">Esewa</option>
               <option value="Khalti">Khalti</option>

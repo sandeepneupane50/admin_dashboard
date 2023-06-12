@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { CButton, CCol, CForm, CFormCheck, CFormInput, CFormSelect, CCard } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
-import { addfusal, locationurl } from 'src/util/apiroutes'
+import { addFusal, locationUrl } from 'src/util/apiroutes'
 
 
 const FutsalCreate = () => {
-  const [company, setCompany] = useState('')
+  const [futsal, setFutsal] = useState('')
   const [owner, setOwner] = useState('')
   const [email, setEmail] = useState('')
   const [contact, setContact] = useState('')
@@ -31,7 +31,7 @@ const FutsalCreate = () => {
 
   const fetchProvinces = async () => {
     try {
-      const response = await fetch(`${locationurl}/provinces`);
+      const response = await fetch(`${locationUrl}/provinces`);
       const data = await response.json();
       setProvinces(data);
     } catch (error) {
@@ -41,7 +41,7 @@ const FutsalCreate = () => {
 
   const fetchDistricts = async (provinceId) => {
     try {
-      const response = await fetch(`${locationurl}/districts?provinceId=${provinceId}`);
+      const response = await fetch(`${locationUrl}/districts?provinceId=${provinceId}`);
       const data = await response.json();
       setDistricts(data);
     } catch (error) {
@@ -51,7 +51,7 @@ const FutsalCreate = () => {
 
   const fetchCities = async (districtId) => {
     try {
-      const response = await fetch(`${locationurl}/cities?districtId=${districtId}`);
+      const response = await fetch(`${locationUrl}/cities?districtId=${districtId}`);
       const data = await response.json();
       setCities(data);
     } catch (error) {
@@ -118,13 +118,14 @@ const FutsalCreate = () => {
 
   const generateTimeSlots = (startTime, endTime) => {
     const slots = [];
-    let currentSlotStart = startTime;
-    while (currentSlotStart < endTime) {
-      const slotStart = formatTime(new Date(currentSlotStart));
-      const slotEnd = formatTime(new Date(currentSlotStart + 59 * 60000)); // Add 59 minutes
+    let start = new Date(startTime);
+    while (start < endTime) {
+      const slotStart = formatTime(start);
+      start.setHours(start.getHours() + 1);
+      const slotEnd = formatTime(start);
       slots.push(`${slotStart}-${slotEnd}`);
-      currentSlotStart += 60 * 60000; // Increment by 1 hour
     }
+
     return slots;
   };
 
@@ -132,7 +133,7 @@ const FutsalCreate = () => {
   const handleSubmit = (event) => {
     event.preventDefault()
     const detail = {
-      company,
+      futsal,
       owner,
       email,
       contact,
@@ -149,9 +150,9 @@ const FutsalCreate = () => {
       timeSlots,
     }
 
-    if (company.length < 3) {
+    if (futsal.length < 3) {
       setError({
-        company: "invalid name"
+        futsal: "invalid name"
       })
     } else if (owner.length < 3) {
       setError({
@@ -213,18 +214,7 @@ const FutsalCreate = () => {
       // Generate time slots
       const startTime = parseTime(openingTime);
       const endTime = parseTime(closingTime);
-
-      let start = new Date(startTime);
-      const end = new Date(endTime);
-
       const slots = generateTimeSlots(startTime, endTime);
-
-      while (start < end) {
-        const slotStart = formatTime(start);
-        start.setHours(start.getHours() + 1);
-        const slotEnd = formatTime(start);
-        slots.push(`${slotStart}-${slotEnd}`);
-      }
 
       // Assign time slots to detail object
       const updatedDetail = {
@@ -233,7 +223,7 @@ const FutsalCreate = () => {
       };
       setTimeSlots(slots);
 
-      fetch(`${addfusal}/details`, {
+      fetch(`${addFusal}/details`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedDetail),
@@ -258,14 +248,14 @@ const FutsalCreate = () => {
         <CForm className="row g-3" onSubmit={handleSubmit} method="POST">
           <CCol xs={6}>
             <CFormInput
-              id="Company"
-              label="Company Name:"
-              placeholder="Futsal Company Name"
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
+              id="Futsal"
+              label="Futsal Name:"
+              placeholder="Futsal Name"
+              value={futsal}
+              onChange={(e) => setFutsal(e.target.value)}
             />
-            {error.company ?
-              <label className="create-error">{error.company}</label> : ''
+            {error.futsal ?
+              <label className="create-error">{error.futsal}</label> : ''
             }
           </CCol>
 

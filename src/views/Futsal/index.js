@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { addfusal, locationurl } from 'src/util/apiroutes';
+import { addFusal } from 'src/util/apiroutes';
 import {
   CCard,
   CCardBody,
@@ -33,7 +33,7 @@ const Futsals = () => {
   const fetchData = () => {
     const startIndex = (currentPage - 1) * recordsPerPage;
     const endIndex = startIndex + recordsPerPage;
-    fetch(`${addfusal}/details?_sort=id&_order=desc&_start=${startIndex}&_end=${endIndex}`)
+    fetch(`${addFusal}/details?_sort=id&_order=desc&_start=${startIndex}&_end=${endIndex}`)
       .then((res) => res.json())
       .then((data) => {
         setDetails(data);
@@ -46,7 +46,7 @@ const Futsals = () => {
  
 
   const handleDelete = (detail) => {
-    fetch(`${addfusal}/details/${detail.id}`, {
+    fetch(`${addFusal}/details/${detail.id}`, {
       method: 'DELETE'
     })
       .then(() => {
@@ -64,7 +64,7 @@ const Futsals = () => {
 
 
   const fetchTotalCount = () => {
-    fetch(`${addfusal}/details`)
+    fetch(`${addFusal}/details`)
       .then((res) => res.headers.get('X-Total-Count'))
       .then((count) => {
         setTotalCount(count);
@@ -127,7 +127,7 @@ const Futsals = () => {
                   {details.map((detail, index) => (
                     <CTableRow key={detail.id}>
                       <CTableHeaderCell scope="row">{detail.id}</CTableHeaderCell>
-                      <CTableDataCell>{detail.company}</CTableDataCell>
+                      <CTableDataCell>{detail.futsal}</CTableDataCell>
                       <CTableDataCell>{detail.city}</CTableDataCell>
                       <CTableDataCell>{detail.contact}</CTableDataCell>
                       <CTableDataCell>{detail.status === '1' ? 'Active' : 'Inactive'}</CTableDataCell>

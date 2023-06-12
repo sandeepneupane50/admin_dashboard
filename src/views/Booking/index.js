@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { bookfutsal } from 'src/util/apiroutes';
+import { bookFutsal } from 'src/util/apiroutes';
 import {
   CCard,
   CCardBody,
@@ -35,7 +35,7 @@ const Bookings = () => {
   const fetchData = () => {
     const startIndex = (currentPage - 1) * recordsPerPage;
     const endIndex = startIndex + recordsPerPage;
-    fetch(`${bookfutsal}/books?_sort=id&_order=desc&_start=${startIndex}&_end=${endIndex}`)
+    fetch(`${bookFutsal}/books?_sort=id&_order=desc&_start=${startIndex}&_end=${endIndex}`)
       .then((res) => res.json())
       .then((data) => {
         setBooks(data);
@@ -48,7 +48,7 @@ const Bookings = () => {
  
 
   const handleDelete = (book) => {
-    fetch(`${bookfutsal}/books/${book.id}`, {
+    fetch(`${bookFutsal}/books/${book.id}`, {
       method: 'DELETE'
     })
       .then(() => {
@@ -66,7 +66,7 @@ const Bookings = () => {
 
 
   const fetchTotalCount = () => {
-    fetch(`${bookfutsal}/books`)
+    fetch(`${bookFutsal}/books`)
       .then((res) => res.headers.get('X-Total-Count'))
       .then((count) => {
         setTotalCount(count);

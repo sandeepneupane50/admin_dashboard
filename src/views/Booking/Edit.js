@@ -9,7 +9,7 @@ import {
   CCard
 } from '@coreui/react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { bookfutsal, locationurl } from 'src/util/apiroutes';
+import { bookFutsal, locationUrl } from 'src/util/apiroutes';
 
 const BookingEdit = () => {
   const [client, setClient] = useState('');
@@ -32,7 +32,7 @@ const BookingEdit = () => {
 
   const fetchProvinces = async () => {
     try {
-      const response = await fetch(`${locationurl}/provinces`);
+      const response = await fetch(`${locationUrl}/provinces`);
       const data = await response.json();
       setProvinces(data);
     } catch (error) {
@@ -42,7 +42,7 @@ const BookingEdit = () => {
 
   const fetchDistricts = async (provinceId) => {
     try {
-      const response = await fetch(`${locationurl}/districts?provinceId=${provinceId}`);
+      const response = await fetch(`${locationUrl}/districts?provinceId=${provinceId}`);
       const data = await response.json();
       setDistricts(data);
     } catch (error) {
@@ -52,7 +52,7 @@ const BookingEdit = () => {
 
   const fetchCities = async (districtId) => {
     try {
-      const response = await fetch(`${locationurl}/cities?districtId=${districtId}`);
+      const response = await fetch(`${locationUrl}/cities?districtId=${districtId}`);
       const data = await response.json();
       setCities(data);
     } catch (error) {
@@ -105,7 +105,7 @@ const BookingEdit = () => {
   }, []);
 
   useEffect(() => {
-    fetch(`${bookfutsal}/books?id=${id}`)
+    fetch(`${bookFutsal}/books?id=${id}`)
       .then((response) => response.json())
       .then((data) => {
         if (data.length > 0) {
@@ -183,7 +183,7 @@ const BookingEdit = () => {
     };
 
     try {
-      const response = await fetch(`${bookfutsal}/books/${id}`, {
+      const response = await fetch(`${bookFutsal}/books/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -299,8 +299,8 @@ const BookingEdit = () => {
                 value={futsalname}
                 onChange={handleChange}
               />
-              {error.company ?
-                <label className="create-error">{error.company}</label> : ''
+              {error.futsalname ?
+                <label className="create-error">{error.futsalname}</label> : ''
               }
             </CCol>
             <CCol xs={4}>
