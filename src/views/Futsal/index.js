@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { addFusal } from 'src/util/apiroutes';
+import { addFusal, locationUrl } from 'src/util/apiroutes';
 import {
   CCard,
   CCardBody,
@@ -21,14 +21,11 @@ import {
 
 const Futsals = () => {
   const [details, setDetails] = useState([]);
+  const [cities, setCities] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
   const [totalCount, setTotalCount] = useState(0);
   const [npage, setNPage] = useState(0);
-
-  useEffect(() => {
-    fetchData();
-  }, [currentPage]);
 
   const fetchData = () => {
     const startIndex = (currentPage - 1) * recordsPerPage;
@@ -43,7 +40,21 @@ const Futsals = () => {
       });
   };
 
+  // fetching cityname
+  const fetchCities = async () => {
+    const response = await fetch(`${locationUrl}/cities`);
+    const data = await response.json();
+    setCities(data);
+  }
+
+  useEffect(() => {
+    fetchCities();
+  }, [details]);
  
+  useEffect(() => {
+    fetchData();
+  }, [currentPage]);
+
 
   const handleDelete = (detail) => {
     fetch(`${addFusal}/details/${detail.id}`, {

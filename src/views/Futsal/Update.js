@@ -15,7 +15,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { addFusal, locationUrl } from "src/util/apiroutes";
 
 
-
 const FutsalUpdate = () => {
 
   const [futsal, setFutsal] = useState("");
@@ -40,10 +39,6 @@ const FutsalUpdate = () => {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
 
-  const onOptionChange = (e) => {
-    setStatus(e.target.value);
-    console.log(e.target.value);
-  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -73,9 +68,9 @@ const FutsalUpdate = () => {
     }
   };
 
-  const fetchDistricts = async (provinceId) => {
+  const fetchDistricts = async () => {
     try {
-      const response = await fetch(`${locationUrl}/districts?provinceId=${provinceId}`);
+      const response = await fetch(`${locationUrl}/districts?provinceId=${selectedProvince}`);
       const data = await response.json();
       setDistricts(data);
     } catch (error) {
@@ -83,9 +78,9 @@ const FutsalUpdate = () => {
     }
   };
 
-  const fetchCities = async (districtId) => {
+  const fetchCities = async () => {
     try {
-      const response = await fetch(`${locationUrl}/cities?districtId=${districtId}`);
+      const response = await fetch(`${locationUrl}/cities?districtId=${selectedDistrict}`);
       const data = await response.json();
       setCities(data);
     } catch (error) {
@@ -95,27 +90,13 @@ const FutsalUpdate = () => {
 
 
   const handleProvinceChange = (event) => {
-    const selectedProvinceId = event.target.value;
-    setSelectedProvince(selectedProvinceId);
+    setSelectedProvince(event.target.value);
     setSelectedDistrict('');
-
-    if (selectedProvinceId) {
-      fetchDistricts(selectedProvinceId);
-    } else {
-      setDistricts([]);
-    }
   };
 
   const handleDistrictChange = (event) => {
-    const selectedDistrictId = event.target.value;
-    setSelectedDistrict(selectedDistrictId);
+    setSelectedDistrict(event.target.value);
     setSelectedCity('');
-
-    if (selectedDistrictId) {
-      fetchCities(selectedDistrictId);
-    } else {
-      setCities([]);
-    }
   };
 
   const handleCityChange = (event) => {
@@ -123,20 +104,21 @@ const FutsalUpdate = () => {
     setSelectedCity(selectedCityName);
   };
 
-
-
   // options location
   useEffect(() => {
     fetchProvinces();
-    if (selectedProvince) {
-      fetchDistricts(selectedProvince);
-    }
-    if (selectedDistrict) {
-      fetchCities(selectedDistrict);
-    } else {
-      setCities([]);
-    }
-  }, [selectedProvince, selectedDistrict]);
+  }, []);
+
+  useEffect(() => {
+    fetchDistricts();
+  }, [selectedProvince]);
+
+  useEffect(() => {
+    fetchCities();
+  }, [selectedDistrict]);
+
+
+
 
   // timeslots
 

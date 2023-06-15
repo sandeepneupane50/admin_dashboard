@@ -89,7 +89,7 @@
       "id": 3
     },
     {
-      "futsal": "Hector Alexander",
+      "futsal": "Hector Alexande",
       "owner": "Kibo Atkins",
       "email": "tuzorul@mailinator.com",
       "contact": "4121212121",
@@ -102,7 +102,7 @@
       "openingTime": "09:00",
       "closingTime": "21:00",
       "ground": "1",
-      "status": "1",
+      "status": "0",
       "timeSlots": [
         "09:00-10:00",
         "10:00-11:00",

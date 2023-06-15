@@ -27,8 +27,6 @@ const FutsalCreate = () => {
   const [error, setError] = useState([])
   const navigate = useNavigate()
 
-
-
   const fetchProvinces = async () => {
     try {
       const response = await fetch(`${locationUrl}/provinces`);
@@ -39,9 +37,9 @@ const FutsalCreate = () => {
     }
   };
 
-  const fetchDistricts = async (provinceId) => {
+  const fetchDistricts = async () => {
     try {
-      const response = await fetch(`${locationUrl}/districts?provinceId=${provinceId}`);
+      const response = await fetch(`${locationUrl}/districts?provinceId=${selectedProvince}`);
       const data = await response.json();
       setDistricts(data);
     } catch (error) {
@@ -49,9 +47,9 @@ const FutsalCreate = () => {
     }
   };
 
-  const fetchCities = async (districtId) => {
+  const fetchCities = async () => {
     try {
-      const response = await fetch(`${locationUrl}/cities?districtId=${districtId}`);
+      const response = await fetch(`${locationUrl}/cities?districtId=${selectedDistrict}`);
       const data = await response.json();
       setCities(data);
     } catch (error) {
@@ -61,31 +59,32 @@ const FutsalCreate = () => {
 
 
   const handleProvinceChange = (event) => {
-    const selectedProvinceId = event.target.value;
-    setSelectedProvince(selectedProvinceId);
+    setSelectedProvince(event.target.value);
     setSelectedDistrict('');
-
-    if (selectedProvinceId) {
-      fetchDistricts(selectedProvinceId);
-    } else {
-      setDistricts([]);
-    }
   };
 
   const handleDistrictChange = (event) => {
-    const selectedDistrictId = event.target.value;
-    setSelectedDistrict(selectedDistrictId);
+    setSelectedDistrict(event.target.value);
     setSelectedCity('');
-
-    if (selectedDistrictId) {
-      fetchCities(selectedDistrictId);
-    }
   };
 
   const handleCityChange = (event) => {
     const selectedCityName = event.target.value;
     setSelectedCity(selectedCityName);
   };
+
+  // options location
+  useEffect(() => {
+    fetchProvinces();
+  }, []);
+
+  useEffect(() => {
+    fetchDistricts();
+  }, [selectedProvince]);
+
+  useEffect(() => {
+    fetchCities();
+  }, [selectedDistrict]);
 
 
   const onOptionChange = e => {
@@ -235,12 +234,6 @@ const FutsalCreate = () => {
 
 
   }
-
-  // options location
-  useEffect(() => {
-    fetchProvinces();
-    fetchDistricts();
-  }, []);
 
   return (
     <div>

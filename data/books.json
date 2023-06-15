@@ -1,251 +1,89 @@
 {
   "books": [
     {
-      "client": "jkas",
-      "contact": "9090909090",
+      "client": "Regina Mayo",
+      "contact": "8078787878",
+      "province": "1",
+      "district": "1",
+      "city": "1",
+      "futsalname": "4",
+      "bookdate": "2000-03-03",
+      "slots": [
+        "09:00-10:00",
+        "16:00-17:00"
+      ],
+      "ground": "9",
+      "paymentmethod": "Cash",
+      "status": "1",
+      "id": 1
+    },
+    {
+      "client": "Hollee Lott",
+      "contact": "6767676767",
       "province": "1",
       "district": "1",
       "city": "1",
       "futsalname": "1",
-      "bookdate": "2023-06-22",
-      "slots": "",
+      "bookdate": "2000-01-01",
+      "slots": [
+        "09:00-10:00",
+        "14:00-15:00"
+      ],
       "ground": "1",
       "paymentmethod": "Cash",
       "status": "1",
       "id": 2
     },
     {
-      "client": "abs",
-      "contact": "9090909090",
+      "client": "Hollee Lott",
+      "contact": "6767676767",
       "province": "1",
       "district": "1",
       "city": "1",
       "futsalname": "1",
-      "bookdate": "9999-09-09",
-      "slots": "",
+      "bookdate": "2000-01-01",
+      "slots": [
+        "08:00-9:00",
+        "15:00-16:00"
+      ],
       "ground": "1",
-      "paymentmethod": "Esewa",
+      "paymentmethod": "Cash",
       "status": "1",
       "id": 3
     },
     {
-      "client": "jnm",
-      "contact": "9090909089",
+      "client": "Akeem Kirk",
+      "contact": "7356565656",
       "province": "1",
       "district": "1",
       "city": "1",
-      "futsalname": "1",
-      "bookdate": "9999-09-09",
-      "slots": "",
-      "ground": "99",
+      "futsalname": "4",
+      "bookdate": "2008-02-14",
+      "slots": [
+        "09:00-10:00",
+        "13:00-14:00"
+      ],
+      "ground": "8",
       "paymentmethod": "Cash",
       "status": "1",
       "id": 4
     },
     {
-      "client": "hgdhgn",
-      "contact": "9090909090",
-      "province": "1",
-      "district": "1",
-      "city": "1",
-      "futsalname": "1",
-      "bookdate": "2023-06-01",
-      "slots": [
-        {
-          "value": "09:00-10:00",
-          "label": "09:00-10:00"
-        }
-      ],
-      "ground": "1",
-      "paymentmethod": "Cash",
-      "status": "1",
-      "id": 5
-    },
-    {
-      "client": "ddckn",
-      "contact": "8989899898",
-      "province": "1",
-      "district": "1",
-      "city": "1",
-      "futsalname": "1",
-      "bookdate": "2023-06-01",
-      "slots": [
-        {
-          "value": "12:00-13:00",
-          "label": "12:00-13:00"
-        }
-      ],
-      "ground": "-1",
-      "paymentmethod": "Cash",
-      "status": "1",
-      "id": 6
-    },
-    {
-      "client": "scJKB",
-      "contact": "8989898989",
-      "province": "1",
-      "district": "1",
-      "city": "1",
-      "futsalname": "1",
-      "bookdate": "2023-06-01",
-      "slots": [
-        {
-          "value": "09:00-10:00",
-          "label": "09:00-10:00"
-        }
-      ],
-      "ground": "1",
-      "paymentmethod": "Esewa",
-      "status": "1",
-      "id": 7
-    },
-    {
-      "client": "Emma Gallagher",
-      "contact": "5354545454",
-      "province": "1",
-      "district": "1",
-      "city": "1",
-      "futsalname": "1",
-      "bookdate": "1998-01-28",
-      "slots": [
-        "09:00-10:00",
-        "10:00-11:00",
-        "11:00-12:00",
-        "12:00-13:00",
-        "13:00-14:00",
-        "14:00-15:00",
-        "15:00-16:00",
-        "16:00-17:00",
-        "17:00-18:00",
-        "18:00-19:00",
-        "19:00-20:00",
-        "20:00-21:00"
-      ],
-      "ground": "2",
-      "paymentmethod": "Cash",
-      "status": "1",
-      "id": 8
-    },
-    {
-      "client": "Macaulay Holman",
-      "contact": "7676767676",
-      "province": "1",
-      "district": "1",
-      "city": "1",
-      "futsalname": "1",
-      "bookdate": "2007-12-10",
-      "slots": [
-        {
-          "slot": "13:00-14:00"
-        }
-      ],
-      "ground": "1",
-      "paymentmethod": "Cash",
-      "status": "1",
-      "id": 9
-    },
-    {
-      "client": "Mechelle Stevenson",
+      "client": "Molly Whitfield",
       "contact": "5567676767",
       "province": "1",
       "district": "1",
       "city": "1",
-      "futsalname": "1",
-      "bookdate": "1979-10-08",
+      "futsalname": "4",
+      "bookdate": "2008-02-14",
       "slots": [
-        {
-          "value": "09:00-10:00",
-          "label": "09:00-10:00"
-        },
-        {
-          "value": "12:00-13:00",
-          "label": "12:00-13:00"
-        }
+        "10:00-11:00",
+        "15:00-16:00"
       ],
-      "ground": "4",
-      "paymentmethod": "Khalti",
-      "status": "1",
-      "id": 10
-    },
-    {
-      "client": "Hasad Michael",
-      "contact": "1067676767",
-      "province": "1",
-      "district": "1",
-      "city": "1",
-      "futsalname": "1",
-      "bookdate": "2012-11-29",
-      "slots": [
-        null,
-        "13:00-14:00"
-      ],
-      "ground": "22",
+      "ground": "3",
       "paymentmethod": "Cash",
       "status": "1",
-      "id": 11
-    },
-    {
-      "client": "Chelsea Nash",
-      "contact": "5367676767",
-      "province": "1",
-      "district": "1",
-      "city": "1",
-      "futsalname": "1",
-      "bookdate": "1990-01-31",
-      "slots": [
-        {
-          "value": "12:00-13:00",
-          "label": "12:00-13:00"
-        },
-        {
-          "value": "14:00-15:00",
-          "label": "14:00-15:00"
-        }
-      ],
-      "ground": "100",
-      "paymentmethod": "Esewa",
-      "status": "1",
-      "id": 12
-    },
-    {
-      "client": "skjz",
-      "contact": "9877899877",
-      "province": "1",
-      "district": "1",
-      "city": "1",
-      "futsalname": "1",
-      "bookdate": "2023-06-15",
-      "slots": [
-        {
-          "value": "11:00-12:00",
-          "label": "11:00-12:00"
-        },
-        {
-          "value": "14:00-15:00",
-          "label": "14:00-15:00"
-        }
-      ],
-      "ground": "1",
-      "paymentmethod": "Cash",
-      "status": "1",
-      "id": 13
-    },
-    {
-      "client": "Brett Schmidt",
-      "contact": "5567676798",
-      "province": "1",
-      "district": "1",
-      "city": "1",
-      "futsalname": "1",
-      "bookdate": "1995-02-10",
-      "slots": [
-        null,
-        "14:00-15:00"
-      ],
-      "ground": "1",
-      "paymentmethod": "Cash",
-      "status": "1",
-      "id": 14
+      "id": 5
     }
   ]
 }

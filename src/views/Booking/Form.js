@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { CButton, CCol, CForm, CFormCheck, CFormInput, CFormSelect, CCard } from '@coreui/react'
-import { json, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { bookFutsal, locationUrl, addFusal } from 'src/util/apiroutes'
 import Select from 'react-select'
-
 
 const BookingForm = () => {
   const [client, setClient] = useState('')
@@ -18,14 +17,12 @@ const BookingForm = () => {
   const [selectedFutsal, setSelectedFutsal] = useState('');
   const [bookdate, setBookDate] = useState('')
   // timeslots
-  const [slots, setSlots] = useState([])
-  const [selectedSlots, setSelectedSlots] = useState([])
+  const [slots, setSlots] = useState([]);
+  const [selectedSlots, setSelectedSlots] = useState([]);
   const [status, setStatus] = useState('')
   const [ground, setGround] = useState('')
   const [paymentmethod, setPaymentmethod] = useState('')
   const [error, setError] = useState([])
-
-  // fetching bookedslots
   const [bookedSlots, setBookedSlots] = useState([]);
   const navigate = useNavigate()
 
@@ -39,9 +36,9 @@ const BookingForm = () => {
     }
   };
 
-  const fetchDistricts = async (provinceId) => {
+  const fetchDistricts = async () => {
     try {
-      const response = await fetch(`${locationUrl}/districts?provinceId=${provinceId}`);
+      const response = await fetch(`${locationUrl}/districts?provinceId=${selectedProvince}`);
       const data = await response.json();
       setDistricts(data);
     } catch (error) {
@@ -49,9 +46,9 @@ const BookingForm = () => {
     }
   };
 
-  const fetchCities = async (districtId) => {
+  const fetchCities = async () => {
     try {
-      const response = await fetch(`${locationUrl}/cities?districtId=${districtId}`);
+      const response = await fetch(`${locationUrl}/cities?districtId=${selectedDistrict}`);
       const data = await response.json();
       setCities(data);
     } catch (error) {
@@ -59,9 +56,9 @@ const BookingForm = () => {
     }
   }
 
-  const fetchFutsals = async (cityId) => {
+  const fetchFutsals = async () => {
     try {
-      const response = await fetch(`${addFusal}/details?city=${cityId}`);
+      const response = await fetch(`${addFusal}/details?city=${selectedCity}`);
       const data = await response.json();
       const futsalNames = data.map((futsal) => ({ id: futsal.id, name: futsal.futsal }));
       setFutsals(futsalNames);
@@ -72,83 +69,66 @@ const BookingForm = () => {
   
 
   // fetching timeslots
-  const fetchSlots = async (selectedFutsal) => {
+  const fetchSlots = async () => {
     try {
       const response = await fetch(`${addFusal}/details?id=${selectedFutsal}`)
       const data = await response.json();
-      const timeSlots = data[0]['timeSlots'];
-      setSlots(timeSlots);
+      if(data.length > 0) {
+        const timeSlots = data[0]['timeSlots'];
+        setSlots(timeSlots);
+      }
     } catch (error) {
       console.error('Error fetching timeSlots:', error);
     }
   };
 
   const handleProvinceChange = (event) => {
-    const selectedProvinceId = event.target.value;
-    setSelectedProvince(selectedProvinceId);
+    setSelectedProvince(event.target.value);
     setSelectedDistrict('');
-  
-    if (selectedProvinceId) {
-      fetchDistricts(selectedProvinceId);
-    } else {
-      setDistricts([]);
-    }
   };
 
   const handleDistrictChange = (event) => {
-    const selectedDistrictId = event.target.value;
-    setSelectedDistrict(selectedDistrictId);
+    setSelectedDistrict(event.target.value);
     setSelectedCity('');
-
-    if (selectedDistrictId) {
-      fetchCities(selectedDistrictId);
-    }
   };
 
   const handleCityChange = (event) => {
-    const selectedCityId = event.target.value;
-    setSelectedCity(selectedCityId);
+    setSelectedCity(event.target.value);
     setSelectedFutsal('');
-  
-    if (selectedCityId) {
-      fetchFutsals(selectedCityId);
-    } else {
-      setFutsals([]);
-    }
   };
-  
-  
 
   const handleFutsalChange = (event) => {
-    const selectedFutsalId = event.target.value;
-    setSelectedFutsal(selectedFutsalId);
-    setSelectedSlots('');
+    setSelectedFutsal(event.target.value);
+    setSelectedSlots([]);
 
-    if (selectedFutsalId) {
-      fetchSlots(selectedFutsalId);
+  }
+
+  async function fetchData() {
+    const response = await fetch(`${bookFutsal}/books?futsal=${selectedFutsal}&bookdate=${bookdate}`);
+    const data = await response.json();
+    let bookedSlots = new Set();
+    data.forEach(element => {
+      element.slots.forEach(slot => {
+        bookedSlots.add(slot)
+      })
+    });
+    setBookedSlots(Array.from(bookedSlots));
+  }
+
+  useEffect(() => {
+    if(selectedFutsal !== '' && bookdate !== '') {
+      fetchData();      
     }
-  }
-
-  const handleBookDate = async (e) => {
-    setBookDate(e.target.value);
-
-    //fetching bookedslots 
-    // const fetchBookSlots = async () => {
-      const response = await fetch(`${bookFutsal}/books?futsal=${selectedFutsal}&bookdate=${bookdate}`);
-      const data = await response.json();
-      console.log(data);
-    // }
-  }
-
+  }, [bookdate]);
 
   const slotOptions = () => {
-    return (slots.map(slot => ({value: slot,label: slot})))
+    let availableSlots = slots.filter(x => !bookedSlots.includes(x));
+    return availableSlots.map(slot => ({ label: slot, value: slot}));
   }
 
-
-  const onSlotsChange = (value) => {
-    setSelectedSlots(value);
-    }
+  const onSlotsChange = (slots) => {
+    setSelectedSlots(slots);
+  }
 
   const onOptionChange = e => {
     setStatus(e.target.value)
@@ -157,6 +137,22 @@ const BookingForm = () => {
   useEffect(() => {
     fetchProvinces();
   }, []);
+
+  useEffect(() => {
+    fetchDistricts();
+  }, [selectedProvince]);
+
+  useEffect(() => {
+    fetchCities();
+  }, [selectedDistrict]);
+
+  useEffect(() => {
+    fetchFutsals();
+  }, [selectedCity]);
+
+  useEffect(() => {
+    fetchSlots();
+  }, [selectedFutsal]);
 
 
 
@@ -170,7 +166,7 @@ const BookingForm = () => {
       city: selectedCity,
       futsalname: selectedFutsal,
       bookdate,
-      slots: selectedSlots,
+      slots: selectedSlots.map(slots => slots.value),
       ground,
       paymentmethod,
       status,
@@ -341,7 +337,7 @@ const BookingForm = () => {
               type="date"
               id="bookime"
               value={bookdate}
-              onChange={handleBookDate}
+              onChange={(e) => setBookDate(e.target.value)}
             />
             {error['bookdate'] ?
               <label className="create-error">{error.bookdate}</label> : ''

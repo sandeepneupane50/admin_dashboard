@@ -12,7 +12,6 @@ const Dashboard = () => {
         return res.json()
       })
       .then(data => {
-        console.log(data)
         setDetails(data)
       })
       .catch(error => {
@@ -25,7 +24,7 @@ const Dashboard = () => {
         <CCard style={{ width: '18rem' }}>
           <CCardBody>
             <CCardTitle>Total Registered:</CCardTitle>
-            <CCardText><h1>{details.length}</h1></CCardText>
+            <h2>{details.length}</h2>
             <Link to="/futsals"><CButton>View ALL</CButton></Link>
           </CCardBody>
         </CCard>
