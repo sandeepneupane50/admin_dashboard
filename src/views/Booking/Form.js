@@ -58,7 +58,7 @@ const BookingForm = () => {
 
   const fetchFutsals = async () => {
     try {
-      const response = await fetch(`${addFusal}/details?city=${selectedCity}`);
+      const response = await fetch(`${addFusal}/details?city=${selectedCity}&status=1`);
       const data = await response.json();
       const futsalNames = data.map((futsal) => ({ id: futsal.id, name: futsal.futsal }));
       setFutsals(futsalNames);

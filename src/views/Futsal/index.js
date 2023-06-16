@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, json } from 'react-router-dom';
 import { addFusal, locationUrl } from 'src/util/apiroutes';
 import {
   CCard,
@@ -16,8 +16,13 @@ import {
   CButton,
   CButtonGroup,
   CPagination,
-  CPaginationItem
+  CPaginationItem,
+  CFormInput,
+  CForm,
+  CFormSelect,
 } from '@coreui/react';
+
+// import './scss/futsal_index.css';
 
 const Futsals = () => {
   const [details, setDetails] = useState([]);
@@ -26,6 +31,42 @@ const Futsals = () => {
   const recordsPerPage = 10;
   const [totalCount, setTotalCount] = useState(0);
   const [npage, setNPage] = useState(0);
+  const [inputSearch, setInputSearch] = useState('');
+  const [inputSearchStatus, setInputSearchStatus] = useState('');
+
+  // search bar
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${addFusal}/details?futsal=${inputSearch}`);
+      const data = await response.json();
+      setDetails(data);
+    }
+    catch (error) {
+      console.error("error fetching data:", error);
+    }
+
+
+  }
+
+  const handleReset = async () => {
+    fetchData();
+    setInputSearch('');
+  }
+
+  // Sort bar
+
+  const handleStatusChange = async (e) => {
+    try {
+      const response = await fetch(`${addFusal}/details?status=${e.target.value}`);
+      const data = await response.json();
+      setDetails(data);
+    }
+    catch (error) {
+      console.error("error fetching data:", error);
+    }
+  }
 
   const fetchData = () => {
     const startIndex = (currentPage - 1) * recordsPerPage;
@@ -50,7 +91,7 @@ const Futsals = () => {
   useEffect(() => {
     fetchCities();
   }, [details]);
- 
+
   useEffect(() => {
     fetchData();
   }, [currentPage]);
@@ -99,69 +140,117 @@ const Futsals = () => {
   const nextPage = () => {
     if (currentPage != npage) {
       setCurrentPage(currentPage + 1);
-    } 
+    }
   };
-  
+
 
   const numbers = [...Array(npage).keys()].map((n) => n + 1);
 
 
   return (
     <div>
-      <CRow>
-        <div className="d-grid gap-2 d-md-flex justify-content-md-end" style={{ marginBottom: 5 }}>
+      <CRow className='justify-content-between mb-2'>
+        <CCol>
+          <CRow className="justify-content-start" >
+            <CCol>
+              <div className="btn-toolbar" >
+                <CForm onSubmit={handleSearch}>
+                  <div className="btn-group me-2" >
+                    <CFormInput
+                      type="text"
+                      size="sm"
+                      placeholder="futsal..."
+                      value={inputSearch}
+                      onChange={(e) => setInputSearch(e.target.value)}
+                    />
+                  </div>
+                  <div className="btn-group me-2"  >
+                    <button
+                      className="btn btn-outline-info"
+                      type="submit"
+                      size="sm"
+                    >Search
+                    </button>
+                  </div>
+                </CForm>
+                <div className="btn-group me-2">
+                  <button
+                    type="button"
+                    className="btn btn-outline-danger"
+                    size="sm"
+                    onClick={() => handleReset()}
+                  >Reset
+                  </button>
+                </div>
+              </div>
+            </CCol>
+          </CRow>
+        </CCol>
+        <CCol className="d-grid gap-2 d-md-flex justify-content-md-end">
+
+          <CCol xs={4}>
+            <CFormSelect
+              id="status"
+              size="sm"
+              name='status'
+              value={inputSearchStatus}
+              onChange={handleStatusChange}
+            >
+              <option>Search by Status</option>
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
+            </CFormSelect>
+          </CCol>
+
           <Link to={'/futsals/create'}>
-            <CButton color="success" size="lg">
+            <CButton color="success" >
               Add New
             </CButton>
           </Link>
-        </div>
-        <CCol xs={12}>
-          <CCard className="mb-4">
-            <CCardHeader>
-              <strong>Futsal Table</strong> <small>Details of futsal ground</small>
-            </CCardHeader>
-            <CCardBody>
-              <CTable>
-                <CTableHead>
-                  <CTableRow>
-                    <CTableHeaderCell scope="col">S.N</CTableHeaderCell>
-                    <CTableHeaderCell scope="col">Name</CTableHeaderCell>
-                    <CTableHeaderCell scope="col">Location</CTableHeaderCell>
-                    <CTableHeaderCell scope="col">Contact</CTableHeaderCell>
-                    <CTableHeaderCell scope="col">Status</CTableHeaderCell>
-                    <CTableHeaderCell scope="col">Owners</CTableHeaderCell>
-                    <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {details.map((detail, index) => (
-                    <CTableRow key={detail.id}>
-                      <CTableHeaderCell scope="row">{detail.id}</CTableHeaderCell>
-                      <CTableDataCell>{detail.futsal}</CTableDataCell>
-                      <CTableDataCell>{detail.city}</CTableDataCell>
-                      <CTableDataCell>{detail.contact}</CTableDataCell>
-                      <CTableDataCell>{detail.status === '1' ? 'Active' : 'Inactive'}</CTableDataCell>
-                      <CTableDataCell>{detail.owner}</CTableDataCell>
-                      <CTableDataCell>
-                        <CButtonGroup role="group" aria-label="Basic mixed styles example">
-                          <CButton color="warning" shape="rounded-0">
-                            <Link to={`/futsals/${detail.id}/edit`}>Edit</Link>
-                          </CButton>
-                          <CButton onClick={() => handleDelete(detail)} color="danger" shape="rounded-0">
-                            Delete
-                          </CButton>
-                        </CButtonGroup>
-                      </CTableDataCell>
-                    </CTableRow>
-                  ))}
-                </CTableBody>
-              </CTable>
-            </CCardBody>
-          </CCard>
         </CCol>
       </CRow>
-
+      <CCard className="mb-4">
+        <CCardHeader>
+          <strong>Futsal Table</strong> <small>Details of futsal ground</small>
+        </CCardHeader>
+        <CCardBody>
+          <CTable>
+            <CTableHead>
+              <CTableRow>
+                <CTableHeaderCell scope="col">S.N</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Name</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Location</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Contact</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Status</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Owners</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
+              </CTableRow>
+            </CTableHead>
+            <CTableBody>
+              {details.map((detail, index) => (
+                <CTableRow key={detail.id}>
+                  <CTableHeaderCell scope="row">{detail.id}</CTableHeaderCell>
+                  <CTableDataCell>{detail.futsal}</CTableDataCell>
+                  <CTableDataCell>{detail.city}</CTableDataCell>
+                  <CTableDataCell>{detail.contact}</CTableDataCell>
+                  <CTableDataCell>{detail.status === '1' ? 'Active' : 'Inactive'}</CTableDataCell>
+                  <CTableDataCell>{detail.owner}</CTableDataCell>
+                  <CTableDataCell>
+                    <CButtonGroup role="group" aria-label="Basic mixed styles example">
+                      <CButton color="warning" shape="rounded-0">
+                        <Link to={`/futsals/${detail.id}/edit`}>Edit</Link>
+                      </CButton>
+                      <CButton onClick={() => handleDelete(detail)} color="danger" shape="rounded-0">
+                        Delete
+                      </CButton>
+                    </CButtonGroup>
+                  </CTableDataCell>
+                </CTableRow>
+              ))}
+            </CTableBody>
+          </CTable>
+        </CCardBody>
+      </CCard>
       <CPagination aria-label="Page navigation example" className="pagination">
         <CPaginationItem aria-label="Previous" className="page-itm">
           <button className="page-link" onClick={prePage} disabled={currentPage === 1}>
