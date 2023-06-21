@@ -164,7 +164,7 @@ const FutsalCreate = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedDetail),
-      }).then((response) => {
+      }).then(() => {
         navigate('/futsals')
 
       })
