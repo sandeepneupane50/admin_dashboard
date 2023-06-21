@@ -1,211 +1,98 @@
-// new code
-
 import React, { useState, useEffect } from "react";
-import {
-  CButton,
-  CCol,
-  CForm,
-  CFormCheck,
-  CFormInput,
-  CFormSelect,
-  CCard,
-} from "@coreui/react";
+import { CButton, CCol, CForm, CFormCheck, CFormInput, CFormSelect, CCard } from "@coreui/react";
 import { useNavigate, useParams } from "react-router-dom";
-
-import { addFusal, locationUrl } from "src/util/apiroutes";
+import { addFusal } from 'src/util/apiroutes'
+import SelectedProvince from '../components/SelectProvince'
+import SelectedDistrict from '../components/SelectDistrict'
+import SelectedCity from '../components/SelectCity'
 
 
 const FutsalUpdate = () => {
-
-  const [futsal, setFutsal] = useState("");
-  const [owner, setOwner] = useState("");
-  const [email, setEmail] = useState("");
-  const [contact, setContact] = useState("");
-  const [provinces, setProvinces] = useState([])
-  const [districts, setDistricts] = useState([])
-  const [selectedProvince, setSelectedProvince] = useState('');
+  const [futsal, setFutsal] = useState('')
+  const [owner, setOwner] = useState('')
+  const [email, setEmail] = useState('')
+  const [contact, setContact] = useState('')
+  const [selectedProvince, setSelectedProvince] = useState('')
   const [selectedDistrict, setSelectedDistrict] = useState('');
-  const [cities, setCities] = useState([])
   const [selectedCity, setSelectedCity] = useState('')
-  const [street, setStreet] = useState("");
-  const [pan, setPan] = useState("");
-  const [file, setFile] = useState("");
+  const [street, setStreet] = useState('')
+  const [pan, setPan] = useState('')
+  const [file, setFile] = useState('')
+  const [status, setStatus] = useState('')
   const [openingTime, setOpeningTime] = useState('')
   const [closingTime, setClosingTime] = useState('')
-  const [timeSlots, setTimeSlots] = useState([])
   const [ground, setGround] = useState('')
-  const [status, setStatus] = useState("");
+  const [timeSlots, setTimeSlots] = useState([])
   const [error, setError] = useState(false);
-  const [data, setData] = useState([]);
   const navigate = useNavigate();
 
+  const getProvince = (selectedProvince) => {
+    setSelectedProvince(selectedProvince);
+    setSelectedDistrict('');
+  }
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setFile(file);
-  };
-
-  const handleOpeningTimeChange = (e) => {
-    setOpeningTime(e.target.value);
-  };
-
-  const handleClosingTimeChange = (e) => {
-    setClosingTime(e.target.value);
-  };
+  const getDistrict = (selectedDistrict) => {
+    setSelectedDistrict(selectedDistrict);
+    setSelectedCity('');
+  }
+  const getCity = (selectedCity) => {
+    setSelectedCity(selectedCity);
+  }
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  const fetchProvinces = async () => {
-    try {
-      const response = await fetch(`${locationUrl}/provinces`);
-      const data = await response.json();
-      setProvinces(data);
-    } catch (error) {
-      console.error('Error fetching provinces:', error);
-    }
-  };
-
-  const fetchDistricts = async () => {
-    try {
-      const response = await fetch(`${locationUrl}/districts?provinceId=${selectedProvince}`);
-      const data = await response.json();
-      setDistricts(data);
-    } catch (error) {
-      console.error('Error fetching districts:', error);
-    }
-  };
-
-  const fetchCities = async () => {
-    try {
-      const response = await fetch(`${locationUrl}/cities?districtId=${selectedDistrict}`);
-      const data = await response.json();
-      setCities(data);
-    } catch (error) {
-      console.error('Error fetching districts:', error);
-    }
-  }
-
-
-  const handleProvinceChange = (event) => {
-    setSelectedProvince(event.target.value);
-    setSelectedDistrict('');
-  };
-
-  const handleDistrictChange = (event) => {
-    setSelectedDistrict(event.target.value);
-    setSelectedCity('');
-  };
-
-  const handleCityChange = (event) => {
-    const selectedCityName = event.target.value;
-    setSelectedCity(selectedCityName);
-  };
-
-  // options location
-  useEffect(() => {
-    fetchProvinces();
-  }, []);
-
-  useEffect(() => {
-    fetchDistricts();
-  }, [selectedProvince]);
-
-  useEffect(() => {
-    fetchCities();
-  }, [selectedDistrict]);
-
-
-
-
   // timeslots
-
   const parseTime = (timeString) => {
     const [hours, minutes] = timeString.split(':');
     return new Date().setHours(hours, minutes, 0, 0);
   };
-
   const formatTime = (time) => {
     const hours = time.getHours().toString().padStart(2, '0');
     const minutes = time.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;
   };
-
   const generateTimeSlots = (startTime, endTime) => {
     const slots = [];
     let start = new Date(startTime);
-
     while (start < endTime) {
       const slotStart = formatTime(start);
       start.setHours(start.getHours() + 1);
       const slotEnd = formatTime(start);
       slots.push(`${slotStart}-${slotEnd}`);
     }
-
     return slots;
   };
 
-
-
-
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    switch (name) {
-      case "futsal":
-        setFutsal(value);
-        break;
-      case "owner":
-        setOwner(value);
-        break;
-      case "email":
-        setEmail(value);
-        break;
-      case "contact":
-        setContact(value);
-        break;
-      case "province":
-        setSelectedProvince(value);
-        break;
-      case "district":
-        setSelectedDistrict(value);
-        break;
-      case "city":
-        setSelectedCity(value);
-        break;
-      case "street":
-        setStreet(value);
-        break;
-      case "pan":
-        setPan(value);
-        break;
-      case "file":
-        setFile(value);
-        break;
-      case "openingTime":
-        setOpeningTime(value);
-        break;
-      case "closingTime":
-        setClosingTime(value);
-        break;
-      case "ground":
-        setGround(value);
-        break;
-      case "status":
-        setStatus(value);
-        break;
-      case "timeSlots":
-        setTimeSlots(value);
-        break;
-      default:
-        break;
-    }
-  };
-
-
-
+  const { id } = useParams();
+  useEffect(() => {
+    fetch(`${addFusal}/details?id=${id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.length > 0) {
+          const detail = data[0];
+          setFutsal(detail.futsal);
+          setOwner(detail.owner);
+          setEmail(detail.email);
+          setContact(detail.contact);
+          setSelectedProvince(detail.province);
+          setSelectedDistrict(detail.district);
+          setSelectedCity(detail.city);
+          setStreet(detail.street);
+          setPan(detail.pan);
+          setFile(detail.file);
+          setOpeningTime(detail.openingTime);
+          setClosingTime(detail.closingTime);
+          setGround(detail.ground);
+          setStatus(detail.status);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, [id]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -271,7 +158,7 @@ const FutsalUpdate = () => {
         ground: "plz enter number of ground"
       })
     } else {
-      const updatedData = {
+      const details = {
         futsal,
         owner,
         email,
@@ -288,17 +175,13 @@ const FutsalUpdate = () => {
         status,
         timeSlots,
       };
-
       // Generate time slots
       const startTime = parseTime(openingTime);
       const endTime = parseTime(closingTime);
-
-
       const slots = generateTimeSlots(startTime, endTime);
-
       // Assign time slots to detail object
       const updatedDetail = {
-        ...updatedData,
+        ...details,
         timeSlots: slots,
       };
       setTimeSlots(slots);
@@ -317,35 +200,6 @@ const FutsalUpdate = () => {
         });
     }
   };
-  const { id } = useParams();
-  useEffect(() => {
-    fetch(`${addFusal}/details?id=${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.length > 0) {
-          const detail = data[0];
-          setFutsal(detail.futsal);
-          setOwner(detail.owner);
-          setEmail(detail.email);
-          setContact(detail.contact);
-          setSelectedProvince(detail.province);
-          setSelectedDistrict(detail.district);
-          setSelectedCity(detail.city);
-          setStreet(detail.street);
-          setPan(detail.pan);
-          setFile(detail.file);
-          setOpeningTime(detail.openingTime);
-          setClosingTime(detail.closingTime);
-          setGround(detail.ground);
-          setStatus(detail.status);
-          setData(data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  }, [id]);
-
   return (
     <div>
       <CCard style={{ padding: '3rem' }}>
@@ -357,7 +211,7 @@ const FutsalUpdate = () => {
               placeholder="Futsal Name"
               value={futsal}
               name="futsal"
-              onChange={handleChange}
+              onChange={(e) => setFutsal(e.target.value)}
 
             />
             {error.futsal ?
@@ -372,7 +226,7 @@ const FutsalUpdate = () => {
               placeholder="Futsal Owner Name"
               value={owner}
               name="owner"
-              onChange={handleChange}
+              onChange={(e) => setOwner(e.target.value)}
             />
             {error['owner'] ?
               <label className="create-error">{error.owner}</label> : ''
@@ -385,7 +239,7 @@ const FutsalUpdate = () => {
               id="inputEmail4"
               label="Email:"
               value={email}
-              onChange={handleChange}
+              onChange={(e) => setEmail(e.target.value)}
               name="email"
             />
             {error['email'] ?
@@ -397,7 +251,7 @@ const FutsalUpdate = () => {
               id="inputContact"
               label="Contact no:"
               value={contact}
-              onChange={handleChange}
+              onChange={(e) => setContact(e.target.value)}
               name="contact"
             />
             {error.contact ?
@@ -405,54 +259,20 @@ const FutsalUpdate = () => {
             }
           </CCol>
           <CCol xs={4}>
-            <CFormSelect
-              id="province"
-              label="Province:"
-              value={selectedProvince}
-              onChange={handleProvinceChange}>
-              <option value="">select province</option>
-              {provinces.map((province) => (
-                <option key={province.id} value={province.id}>
-                  {province.name}
-                </option>
-              ))}
-            </CFormSelect>
+            <SelectedProvince onChange={getProvince} selectedProvince={selectedProvince} />
             {error['province'] ?
               <label className="create-error">{error.province}</label> : ''
             }
           </CCol>
 
           <CCol xs={4}>
-            <CFormSelect
-              id="district"
-              label="District:"
-              value={selectedDistrict}
-              onChange={handleDistrictChange}>
-              <option value="">select district</option>
-              {districts.map((district) => (
-                <option key={district.id} value={district.id}>
-                  {district.name}
-                </option>
-              ))}
-            </CFormSelect>
+            <SelectedDistrict onChange={getDistrict} selectedProvince={selectedProvince} selectedDistrict={selectedDistrict}/>
             {error['district'] ?
               <label className="create-error">{error.district}</label> : ''
             }
           </CCol>
           <CCol md={4}>
-            <CFormSelect
-              id="city"
-              label="City:"
-              value={selectedCity}
-              onChange={handleCityChange}>
-              <option value="">select city</option>
-              {cities.map((city) => (
-                <option key={city.id} value={city.id}>
-                  {city.name}
-                </option>
-              ))}
-
-            </CFormSelect>
+            <SelectedCity onChange={getCity} selectedDistrict={selectedDistrict} selectedCity={selectedCity} />
             {error['city'] ?
               <label className="create-error">{error.city}</label> : ''
             }
@@ -462,7 +282,7 @@ const FutsalUpdate = () => {
               id="inputStreet"
               label="Street:"
               value={street}
-              onChange={handleChange}
+              onChange={(e) => setStreet(e.target.value)}
               name="street"
             />
             {error['street'] ?
@@ -474,7 +294,7 @@ const FutsalUpdate = () => {
               id="inputNumber"
               label="Pan Number:"
               value={pan}
-              onChange={handleChange}
+              onChange={(e) => setPan(e.target.value)}
               name="pan"
             />
             {error['pan'] ?
@@ -488,7 +308,7 @@ const FutsalUpdate = () => {
               feedbackInvalid="Example invalid form file feedback"
               aria-label="file example"
               label="Upload Ground Pic:"
-              onChange={handleFileChange}
+              onChange={(e) => setFile(e.target.value)}
               name="file"
             />
             {error['file'] ?
@@ -502,7 +322,7 @@ const FutsalUpdate = () => {
               type="time"
               id="openingTime"
               value={openingTime}
-              onChange={handleOpeningTimeChange}
+              onChange={(e) => setOpeningTime(e.target.value)}
             />
             {error['openingTime'] ?
               <label className="create-error">{error.openingTime}</label> : ''
@@ -514,7 +334,7 @@ const FutsalUpdate = () => {
               type="time"
               id="closingTime"
               value={closingTime}
-              onChange={handleClosingTimeChange}
+              onChange={(e) => setClosingTime(e.target.value)}
             />
             {error['closingTime'] ?
               <label className="create-error">{error.closingTime}</label> : ''
@@ -544,7 +364,7 @@ const FutsalUpdate = () => {
               label="Active"
               value={1}
               checked={status == 1}
-              onChange={handleChange}
+              onChange={(e) => setStatus(e.target.value)}
             />
             <CFormCheck
               button={{ color: 'danger', variant: 'outline' }}
@@ -554,7 +374,7 @@ const FutsalUpdate = () => {
               label="Inactive"
               value={0}
               checked={status == 0}
-              onChange={handleChange}
+              onChange={(e) => setStatus(e.target.value)}
             /><br></br>
             {error['status'] ?
               <label className="create-error">{error.status}</label> : ''
@@ -568,4 +388,4 @@ const FutsalUpdate = () => {
     </div>
   )
 }
-export default FutsalUpdate
+export default FutsalUpdate;

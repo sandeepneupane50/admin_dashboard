@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { CButton, CCol, CForm, CFormCheck, CFormInput, CFormSelect, CCard } from '@coreui/react'
+import React, { useState } from 'react'
+import { CButton, CCol, CForm, CFormCheck, CFormInput, CCard } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
-import { addFusal, locationUrl } from 'src/util/apiroutes'
+import { addFusal } from 'src/util/apiroutes'
+import SelectedProvince from '../components/SelectProvince'
+import SelectedDistrict from '../components/SelectDistrict'
+import SelectedCity from '../components/SelectCity'
 
 
 const FutsalCreate = () => {
@@ -9,11 +12,8 @@ const FutsalCreate = () => {
   const [owner, setOwner] = useState('')
   const [email, setEmail] = useState('')
   const [contact, setContact] = useState('')
-  const [provinces, setProvinces] = useState([])
-  const [districts, setDistricts] = useState([])
-  const [selectedProvince, setSelectedProvince] = useState('');
+  const [selectedProvince, setSelectedProvince] = useState('')
   const [selectedDistrict, setSelectedDistrict] = useState('');
-  const [cities, setCities] = useState([])
   const [selectedCity, setSelectedCity] = useState('')
   const [street, setStreet] = useState('')
   const [pan, setPan] = useState('')
@@ -21,87 +21,27 @@ const FutsalCreate = () => {
   const [status, setStatus] = useState('')
   const [openingTime, setOpeningTime] = useState('')
   const [closingTime, setClosingTime] = useState('')
-  const [timeSlots, setTimeSlots] = useState([])
   const [ground, setGround] = useState('')
-
+  const [timeSlots, setTimeSlots] = useState([])
   const [error, setError] = useState([])
   const navigate = useNavigate()
 
-  const fetchProvinces = async () => {
-    try {
-      const response = await fetch(`${locationUrl}/provinces`);
-      const data = await response.json();
-      setProvinces(data);
-    } catch (error) {
-      console.error('Error fetching provinces:', error);
-    }
-  };
-
-  const fetchDistricts = async () => {
-    try {
-      const response = await fetch(`${locationUrl}/districts?provinceId=${selectedProvince}`);
-      const data = await response.json();
-      setDistricts(data);
-    } catch (error) {
-      console.error('Error fetching districts:', error);
-    }
-  };
-
-  const fetchCities = async () => {
-    try {
-      const response = await fetch(`${locationUrl}/cities?districtId=${selectedDistrict}`);
-      const data = await response.json();
-      setCities(data);
-    } catch (error) {
-      console.error('Error fetching districts:', error);
-    }
+  const getProvince = (selectedProvince) => {
+    setSelectedProvince(selectedProvince);
+    setSelectedDistrict('');
   }
 
-
-  const handleProvinceChange = (event) => {
-    setSelectedProvince(event.target.value);
-    setSelectedDistrict('');
-  };
-
-  const handleDistrictChange = (event) => {
-    setSelectedDistrict(event.target.value);
+  const getDistrict = (selectedDistrict) => {
+    setSelectedDistrict(selectedDistrict);
     setSelectedCity('');
-  };
-
-  const handleCityChange = (event) => {
-    const selectedCityName = event.target.value;
-    setSelectedCity(selectedCityName);
-  };
-
-  // options location
-  useEffect(() => {
-    fetchProvinces();
-  }, []);
-
-  useEffect(() => {
-    fetchDistricts();
-  }, [selectedProvince]);
-
-  useEffect(() => {
-    fetchCities();
-  }, [selectedDistrict]);
-
-
-  const onOptionChange = e => {
-    setStatus(e.target.value)
+  }
+  const getCity = (selectedCity) => {
+    setSelectedCity(selectedCity);
   }
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
-  };
-
-  const handleOpeningTimeChange = (e) => {
-    setOpeningTime(e.target.value);
-  };
-
-  const handleClosingTimeChange = (e) => {
-    setClosingTime(e.target.value);
   };
 
   const parseTime = (timeString) => {
@@ -130,25 +70,7 @@ const FutsalCreate = () => {
 
 
   const handleSubmit = (event) => {
-    event.preventDefault()
-    const detail = {
-      futsal,
-      owner,
-      email,
-      contact,
-      province: selectedProvince,
-      district: selectedDistrict,
-      city: selectedCity,
-      street,
-      pan,
-      file,
-      openingTime,
-      closingTime,
-      ground,
-      status,
-      timeSlots,
-    }
-
+    event.preventDefault();
     if (futsal.length < 3) {
       setError({
         futsal: "invalid name"
@@ -210,11 +132,27 @@ const FutsalCreate = () => {
         ground: "plz enter number of ground"
       })
     } else {
+      const detail = {
+        futsal,
+        owner,
+        email,
+        contact,
+        province: selectedProvince,
+        district: selectedDistrict,
+        city: selectedCity,
+        street,
+        pan,
+        file,
+        openingTime,
+        closingTime,
+        ground,
+        status,
+        timeSlots,
+      }
       // Generate time slots
       const startTime = parseTime(openingTime);
       const endTime = parseTime(closingTime);
       const slots = generateTimeSlots(startTime, endTime);
-
       // Assign time slots to detail object
       const updatedDetail = {
         ...detail,
@@ -231,16 +169,14 @@ const FutsalCreate = () => {
 
       })
     }
-
-
   }
-
   return (
     <div>
       <CCard style={{ padding: '3rem' }}>
         <CForm className="row g-3" onSubmit={handleSubmit} method="POST">
           <CCol xs={6}>
             <CFormInput
+              name="futsal"
               id="Futsal"
               label="Futsal Name:"
               placeholder="Futsal Name"
@@ -255,6 +191,7 @@ const FutsalCreate = () => {
           <CCol xs={6}>
             <CFormInput
               id="Owner"
+              name="owner"
               label="Owner Name:"
               placeholder="Futsal Owner Name"
               value={owner}
@@ -267,6 +204,7 @@ const FutsalCreate = () => {
 
           <CCol md={4}>
             <CFormInput
+              name="email"
               type="email"
               id="inputEmail4"
               label="Email:"
@@ -278,6 +216,7 @@ const FutsalCreate = () => {
           </CCol>
           <CCol md={4}>
             <CFormInput
+              name="contact"
               type="number"
               id="inputContact"
               label="Contact no:"
@@ -289,61 +228,28 @@ const FutsalCreate = () => {
             }
           </CCol>
           <CCol xs={4}>
-            <CFormSelect
-              id="province"
-              label="Province:"
-              value={selectedProvince}
-              onChange={handleProvinceChange}>
-              <option value="">select province</option>
-              {provinces.map((province) => (
-                <option key={province.id} value={province.id}>
-                  {province.name}
-                </option>
-              ))}
-            </CFormSelect>
+            <SelectedProvince onChange={getProvince} />
             {error['province'] ?
               <label className="create-error">{error.province}</label> : ''
             }
           </CCol>
 
           <CCol xs={4}>
-            <CFormSelect
-              id="district"
-              label="District:"
-              value={selectedDistrict}
-              onChange={handleDistrictChange}>
-              <option value="">select district</option>
-              {districts.map((district) => (
-                <option key={district.id} value={district.id}>
-                  {district.name}
-                </option>
-              ))}
-
-            </CFormSelect>
+            <SelectedDistrict onChange={getDistrict} selectedProvince={selectedProvince} />
             {error['district'] ?
               <label className="create-error">{error.district}</label> : ''
             }
           </CCol>
 
           <CCol md={4}>
-            <CFormSelect
-              id="city"
-              label="City:"
-              value={selectedCity}
-              onChange={handleCityChange}>
-              <option value="">select city</option>
-              {cities.map((city) => (
-                <option key={city.id} value={city.id}>
-                  {city.name}
-                </option>
-              ))}
-            </CFormSelect>
+            <SelectedCity onChange={getCity} selectedDistrict={selectedDistrict} />
             {error['city'] ?
               <label className="create-error">{error.city}</label> : ''
             }
           </CCol>
           <CCol md={4}>
             <CFormInput
+              name="street"
               id="inputStreet"
               label="Street:"
               value={street}
@@ -355,6 +261,7 @@ const FutsalCreate = () => {
           </CCol>
           <CCol md={3}>
             <CFormInput
+              name="pan"
               id="inputNumber"
               label="Pan Number:"
               value={pan}
@@ -366,6 +273,7 @@ const FutsalCreate = () => {
           </CCol>
           <CCol md={3}>
             <CFormInput
+              name="file"
               type="file"
               id="validationTextarea"
               feedbackInvalid="Example invalid form file feedback"
@@ -381,11 +289,12 @@ const FutsalCreate = () => {
 
           <CCol xs={2}>
             <CFormInput
+              name="openingTime"
               label="Opening Time:"
               type="time"
               id="openingTime"
               value={openingTime}
-              onChange={handleOpeningTimeChange}
+              onChange={(e) => setOpeningTime(e.target.value)}
             />
             {error['openingTime'] ?
               <label className="create-error">{error.openingTime}</label> : ''
@@ -393,11 +302,12 @@ const FutsalCreate = () => {
           </CCol>
           <CCol xs={2}>
             <CFormInput
+              name="closingTime"
               label="Closing Time:"
               type="time"
               id="closingTime"
               value={closingTime}
-              onChange={handleClosingTimeChange}
+              onChange={(e) => setClosingTime(e.target.value)}
             />
             {error['closingTime'] ?
               <label className="create-error">{error.closingTime}</label> : ''
@@ -405,6 +315,7 @@ const FutsalCreate = () => {
           </CCol>
           <CCol md={2}>
             <CFormInput
+              name="ground"
               type="number"
               id="inputGround"
               label="No. of Grounds:"
@@ -425,7 +336,7 @@ const FutsalCreate = () => {
               label="Active"
               value={1}
               checked={status == 1}
-              onChange={onOptionChange}
+              onChange={(e) => setStatus(e.target.value)}
             />
             <CFormCheck
               button={{ color: 'danger', variant: 'outline' }}
@@ -435,7 +346,7 @@ const FutsalCreate = () => {
               label="Inactive"
               value={0}
               checked={status == 0}
-              onChange={onOptionChange}
+              onChange={(e) => setStatus(e.target.value)}
             /><br></br>
             {error['status'] ?
               <label className="create-error">{error.status}</label> : ''
@@ -449,4 +360,4 @@ const FutsalCreate = () => {
     </div>
   )
 }
-export default FutsalCreate
+export default FutsalCreate;

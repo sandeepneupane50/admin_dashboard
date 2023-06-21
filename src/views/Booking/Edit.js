@@ -1,30 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import {
-  CButton,
-  CCol,
-  CForm,
-  CFormCheck,
-  CFormInput,
-  CFormSelect,
-  CCard
-} from '@coreui/react';
+import { CButton, CCol, CForm, CFormCheck, CFormInput, CFormSelect, CCard } from '@coreui/react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { bookFutsal, locationUrl, addFusal } from 'src/util/apiroutes';
+import { bookFutsal, addFusal } from 'src/util/apiroutes';
+import SelectedProvince from '../components/SelectProvince'
+import SelectedDistrict from '../components/SelectDistrict'
+import SelectedCity from '../components/SelectCity'
 import Select from 'react-select'
 
 const BookingEdit = () => {
   const [client, setClient] = useState('')
   const [contact, setContact] = useState('')
-  const [provinces, setProvinces] = useState([])
-  const [districts, setDistricts] = useState([])
   const [selectedProvince, setSelectedProvince] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
-  const [cities, setCities] = useState([])
   const [selectedCity, setSelectedCity] = useState('')
   const [futsals, setFutsals] = useState([]);
   const [selectedFutsal, setSelectedFutsal] = useState();
   const [bookdate, setBookDate] = useState('')
-  // timeslots
   const [slots, setSlots] = useState([]);
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [status, setStatus] = useState('')
@@ -33,62 +24,21 @@ const BookingEdit = () => {
   const [error, setError] = useState([])
   const [bookedSlots, setBookedSlots] = useState([]);
   const navigate = useNavigate();
-  const { id } = useParams();
 
-  const fetchBookings = () => {
-    fetch(`${bookFutsal}/books?id=${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.length > 0) {
-          const book = data[0];
-          setClient(book.client);
-          setContact(book.contact);
-          setSelectedProvince(book.province);
-          setSelectedDistrict(book.district);
-          setSelectedCity(book.city);
-          setSelectedFutsal(book.futsalname);
-          setBookDate(book.bookdate);
-          setSelectedSlots(book.slots.map(slot => ({ label: slot, value: slot})));
-          setStatus(book.status);
-          setGround(book.ground);
-          setPaymentmethod(book.paymentmethod);
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching book:', error);
-      });
+
+  const getProvince = (selectedProvince) => {
+    setSelectedProvince(selectedProvince);
+    setSelectedDistrict('');
   }
 
-  const fetchProvinces = async () => {
-    try {
-      const response = await fetch(`${locationUrl}/provinces`);
-      const data = await response.json();
-      setProvinces(data);
-    } catch (error) {
-      console.error('Error fetching provinces:', error);
-    }
-  };
-
-  const fetchDistricts = async () => {
-    try {
-      const response = await fetch(`${locationUrl}/districts?provinceId=${selectedProvince}`);
-      const data = await response.json();
-      setDistricts(data);
-    } catch (error) {
-      console.error('Error fetching districts:', error);
-    }
-  };
-
-  const fetchCities = async () => {
-    try {
-      const response = await fetch(`${locationUrl}/cities?districtId=${selectedDistrict}`);
-      const data = await response.json();
-      setCities(data);
-    } catch (error) {
-      console.error('Error fetching districts:', error);
-    }
+  const getDistrict = (selectedDistrict) => {
+    setSelectedDistrict(selectedDistrict);
+    setSelectedCity('');
   }
-
+  const getCity = (selectedCity) => {
+    setSelectedCity(selectedCity);
+  }
+  
   const fetchFutsals = async () => {
     try {
       const response = await fetch(`${addFusal}/details?city=${selectedCity}&status=1`);
@@ -114,25 +64,10 @@ const BookingEdit = () => {
     }
   };
 
-  const handleProvinceChange = (event) => {
-    setSelectedProvince(event.target.value);
-    setSelectedDistrict('');
-  };
-
-  const handleDistrictChange = (event) => {
-    setSelectedDistrict(event.target.value);
-    setSelectedCity('');
-  };
-
-  const handleCityChange = (event) => {
-    setSelectedCity(event.target.value);
-    setSelectedFutsal('');
-  };
 
   const handleFutsalChange = (event) => {
     setSelectedFutsal(event.target.value);
     setSelectedSlots([]);
-
   }
 
   async function fetchData() {
@@ -168,16 +103,9 @@ const BookingEdit = () => {
 
   useEffect(() => {
     fetchBookings();
-    fetchProvinces();
   }, []);
 
-  useEffect(() => {
-    fetchDistricts();
-  }, [selectedProvince]);
 
-  useEffect(() => {
-    fetchCities();
-  }, [selectedDistrict]);
 
   useEffect(() => {
     fetchFutsals();
@@ -186,6 +114,31 @@ const BookingEdit = () => {
   useEffect(() => {
     fetchSlots();
   }, [selectedFutsal]);
+
+  const { id } = useParams();
+  const fetchBookings = () => {
+    fetch(`${bookFutsal}/books?id=${id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.length > 0) {
+          const book = data[0];
+          setClient(book.client);
+          setContact(book.contact);
+          setSelectedProvince(book.province);
+          setSelectedDistrict(book.district);
+          setSelectedCity(book.city);
+          setSelectedFutsal(book.futsalname);
+          setBookDate(book.bookdate);
+          setSelectedSlots(book.slots.map(slot => ({ label: slot, value: slot})));
+          setStatus(book.status);
+          setGround(book.ground);
+          setPaymentmethod(book.paymentmethod);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching book:', error);
+      });
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -273,8 +226,6 @@ const BookingEdit = () => {
   };
 
 
-
-
   return (
     <>
       <div>
@@ -306,55 +257,21 @@ const BookingEdit = () => {
             </CCol>
 
             <CCol xs={4}>
-              <CFormSelect
-                id="province"
-                label="Province:"
-                value={selectedProvince}
-                onChange={handleProvinceChange}>
-                <option value="">select province</option>
-                {provinces.map((province) => (
-                  <option key={province.id} value={province.id}>
-                    {province.name}
-                  </option>
-                ))}
-              </CFormSelect>
+            <SelectedProvince onChange={getProvince} selectedProvince={selectedProvince} />
               {error['province'] ?
                 <label className="create-error">{error.province}</label> : ''
               }
             </CCol>
 
             <CCol xs={4}>
-              <CFormSelect
-                id="district"
-                label="District:"
-                value={selectedDistrict}
-                onChange={handleDistrictChange}>
-                <option value="">select district</option>
-                {districts.map((district) => (
-                  <option key={district.id} value={district.id}>
-                    {district.name}
-                  </option>
-                ))}
-
-              </CFormSelect>
+            <SelectedDistrict onChange={getDistrict} selectedProvince={selectedProvince} selectedDistrict={selectedDistrict}/>
               {error['district'] ?
                 <label className="create-error">{error.district}</label> : ''
               }
             </CCol>
 
             <CCol md={4}>
-              <CFormSelect
-                id="city"
-                label="City:"
-                value={selectedCity}
-                onChange={handleCityChange}>
-                <option value="">select city</option>
-                {cities.map((city) => (
-                  <option key={city.id} value={city.id}>
-                    {city.name}
-                  </option>
-                ))}
-              </CFormSelect>
+            <SelectedCity onChange={getCity} selectedDistrict={selectedDistrict} selectedCity={selectedCity} />
               {error['city'] ?
                 <label className="create-error">{error.city}</label> : ''
               }

@@ -81,16 +81,16 @@ const Futsals = () => {
       });
   };
 
-  // fetching cityname
-  const fetchCities = async () => {
-    const response = await fetch(`${locationUrl}/cities`);
-    const data = await response.json();
-    setCities(data);
-  }
+  // // fetching cityname
+  // const fetchCities = async () => {
+  //   const response = await fetch(`${locationUrl}/cities`);
+  //   const data = await response.json();
+  //   setCities(data);
+  // }
 
-  useEffect(() => {
-    fetchCities();
-  }, [details]);
+  // useEffect(() => {
+  //   fetchCities();
+  // }, [details]);
 
   useEffect(() => {
     fetchData();
