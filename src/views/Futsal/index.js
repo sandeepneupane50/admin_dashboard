@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Link, json } from 'react-router-dom';
-import { addFusal, locationUrl } from 'src/util/apiroutes';
+import { Link } from 'react-router-dom';
+import { addFusal } from 'src/util/apiroutes';
 import {
   CCard,
   CCardBody,
