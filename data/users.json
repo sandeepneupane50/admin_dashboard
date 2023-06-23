@@ -20,6 +20,20 @@
       "username": "liduxasoj",
       "confirmPassword": "Pa$$w0rd!",
       "id": 4
+    },
+    {
+      "email": "sandeep.neupane.50@gmail.com",
+      "password": "$2a$10$g7e7/6yVnvUQ5Y56zM7Q1.2ML5xlGj1nWbOdBrZh7prbEyCGtIfGG",
+      "username": "ads",
+      "confirmPassword": "zxczxczx",
+      "id": 5
+    },
+    {
+      "email": "hifagipy@mailinator.com",
+      "password": "$2a$10$otm81FzigBdCvDs.KHAD7u9jv.pocpabF.TsFbkEQsHAZHOoMhfcW",
+      "username": "vyfosixu",
+      "confirmPassword": "Pa$$w0rd!",
+      "id": 6
     }
   ]
 }

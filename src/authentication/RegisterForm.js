@@ -24,13 +24,13 @@ const RegisterForm = () => {
             setError({
                 username:"must be atleast 3 letter"
             })
+        }else if(!validateEmail(email)){
+            setError({
+                email:"invalid(eg: abc@gmail.com)"
+            })
         } else if(password.length < 8){
             setError({
                 password:"must be atleast of 8 letter"
-            })
-        }else if(!validateEmail(email)){
-            setError({
-                email:"invalid email"
             })
         } else if(password !== confirmPassword){
             setError({
@@ -67,7 +67,7 @@ const RegisterForm = () => {
                 <CForm onSubmit={handleSubmit} method="POST" >
                   <h1>Register</h1>
                   <p className="text-medium-emphasis">Create your account</p>
-                  <CInputGroup className="mb-3">
+                  <CInputGroup className="mb-1">
                     <CInputGroupText>
                       <CIcon icon={cilUser} />
                     </CInputGroupText>
@@ -78,11 +78,11 @@ const RegisterForm = () => {
                     value={username}
                     onChange={(e)=> setUsername(e.target.value)} />
                   </CInputGroup>
-                  <p>
+                  <p className='text-center'>
                     {error.username ?
                         <label className="create-error">{error.username}</label> : ''
                     }</p>
-                  <CInputGroup className="mb-3">
+                  <CInputGroup className="mb-1">
                     <CInputGroupText>@</CInputGroupText>
                     <CFormInput 
                     placeholder="Email"
@@ -92,11 +92,11 @@ const RegisterForm = () => {
                     onChange={(e)=>setEmail(e.target.value)}
                      />
                   </CInputGroup>
-                  <p>
+                  <p className='text-center'>
                     {error.email ?
                         <label className="create-error">{error.email}</label> : ''
                     }</p>
-                  <CInputGroup className="mb-3">
+                  <CInputGroup className="mb-1">
                     <CInputGroupText>
                       <CIcon icon={cilLockLocked} />
                     </CInputGroupText>
@@ -108,11 +108,11 @@ const RegisterForm = () => {
                       onChange={(e)=>setPassword(e.target.value)}       
                     />
                   </CInputGroup>
-                  <p>
+                  <p className='text-center'>
                     {error.password ?
                         <label className="create-error">{error.password}</label> : ''
                     }</p>
-                  <CInputGroup className="mb-4">
+                  <CInputGroup className="mb-1">
                     <CInputGroupText>
                       <CIcon icon={cilLockLocked} />
                     </CInputGroupText>
@@ -124,7 +124,7 @@ const RegisterForm = () => {
                       onChange={(e)=>setConfirmPassword(e.target.value)}
                     />
                   </CInputGroup>
-                  <p>
+                  <p className='text-center'>
                     {error.confirmPassword ?
                         <label className="create-error">{error.confirmPassword}</label> : ''
                     }</p>
