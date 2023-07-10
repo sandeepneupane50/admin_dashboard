@@ -1,27 +1,15 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  CButton,
-  CCard,
-  CCardBody,
-  CCardGroup,
-  CCol,
-  CContainer,
-  CForm,
-  CFormInput,
-  CInputGroup,
-  CInputGroupText,
-  CRow,
-} from '@coreui/react'
+import { CButton, CCard, CCardBody, CCardGroup, CCol, CContainer, CForm, CFormInput, CInputGroup, CInputGroupText, CRow } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import { addUser } from 'src/util/apiroutes'
 import { useNavigate } from 'react-router-dom'
 
 const LoginForm = () => {
-  const[username, setUsername]= useState('');
+  const[username, setUsername]= useState();
   const [password, setPassword]= useState('');
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -70,6 +58,8 @@ const LoginForm = () => {
                        autoComplete="username"
                        name="username"
                        value={username}
+                       id='email'
+                       type="email"
                        onChange={(e)=>setUsername(e.target.value)}
                         />
                     </CInputGroup>
@@ -83,6 +73,7 @@ const LoginForm = () => {
                         autoComplete="current-password"
                         name="password"
                         value={password}
+                        id='password'
                         onChange={(e)=>setPassword(e.target.value)}
                       />
                     </CInputGroup>

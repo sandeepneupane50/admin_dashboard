@@ -1,0 +1,11 @@
+{
+    "users": [
+        {
+          "email": "admin@gmail.com",
+          "password": "$2a$10$PEYsIVaDHou0iN6cbRJOturtLJl/Uptfjf/5xX8F.XQ2qpWCLadEK",
+          "username": "admin",
+          "confirmPassword": "admin",
+          "id": 2
+        }
+    ]
+}

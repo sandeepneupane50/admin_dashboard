@@ -15,6 +15,7 @@ const _nav = [
     },
   },
   {
+    id:'create_futsals',
     component: CNavItem,
     name: 'Futsals',
     to: '/futsals',

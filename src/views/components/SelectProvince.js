@@ -17,12 +17,13 @@ const SelectedProvince = (props) => {
         }
       };
 
+
       useEffect(() => {
         fetchProvinces();
       }, []);
 
       useEffect(() => {
-        props.onChange(selectedProvince)
+        props.onChange(selectedProvince);
       }, [selectedProvince])
 
     return(
@@ -30,7 +31,7 @@ const SelectedProvince = (props) => {
               name="selectedprovince"
               id="province"
               label="Province:"
-              value={props.selectedProvince}
+              value={selectedProvince}
               onChange={(e) =>setSelectedProvince(e.target.value)}>
               <option value="">select province</option>
               {provinces.map((province) => (

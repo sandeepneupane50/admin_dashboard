@@ -4,6 +4,7 @@ import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import { useNavigate } from 'react-router-dom'
 import { addUser } from 'src/util/apiroutes'
+import axios from 'axios'
 
 const RegisterForm = () => {
     const [username, setUsername] = useState('');
@@ -37,19 +38,25 @@ const RegisterForm = () => {
                 confirmPassword:"doesnot matched"
             })
         }else {
-            const user = {
-                username,
-                email,
-                password,
-                confirmPassword
-            }
+            // const user = {
+            //     username,
+            //     email,
+            //     password,
+            //     confirmPassword
+            // }
     
-            fetch(`${addUser}/users`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(user),
-            }).then(()=>{
-                alert('sucessfully registered..')
+            axios.post(`${addUser}/users`, {
+                // method: 'POST',
+                // headers: { 'Content-Type': 'application/json' },
+                // body: JSON.stringify(user),
+
+                username: username,
+                email: email,
+                password: password,
+                confirmPassword: confirmPassword
+                
+
+            }).then((response)=>{
                 navigate('/login');
             })
         }
@@ -71,7 +78,8 @@ const RegisterForm = () => {
                     <CInputGroupText>
                       <CIcon icon={cilUser} />
                     </CInputGroupText>
-                    <CFormInput 
+                    <CFormInput
+                    id='username'
                     type="text"
                     placeholder="Username"
                     name="username"
@@ -84,7 +92,8 @@ const RegisterForm = () => {
                     }</p>
                   <CInputGroup className="mb-1">
                     <CInputGroupText>@</CInputGroupText>
-                    <CFormInput 
+                    <CFormInput
+                    id='email'
                     placeholder="Email"
                     type="email"
                     name="email"
@@ -101,6 +110,7 @@ const RegisterForm = () => {
                       <CIcon icon={cilLockLocked} />
                     </CInputGroupText>
                     <CFormInput
+                      id='password'
                       type="password"
                       placeholder="Password"
                       name="password"
@@ -117,6 +127,7 @@ const RegisterForm = () => {
                       <CIcon icon={cilLockLocked} />
                     </CInputGroupText>
                     <CFormInput
+                      id='confirmPassword'
                       type="password"
                       placeholder="Repeat password"
                       name="confirmPassword"

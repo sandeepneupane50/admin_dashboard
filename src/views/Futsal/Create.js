@@ -177,7 +177,7 @@ const FutsalCreate = () => {
           <CCol xs={6}>
             <CFormInput
               name="futsal"
-              id="Futsal"
+              id="futsal"
               label="Futsal Name:"
               placeholder="Futsal Name"
               value={futsal}
@@ -190,7 +190,7 @@ const FutsalCreate = () => {
 
           <CCol xs={6}>
             <CFormInput
-              id="Owner"
+              id="owner"
               name="owner"
               label="Owner Name:"
               placeholder="Futsal Owner Name"
@@ -206,7 +206,7 @@ const FutsalCreate = () => {
             <CFormInput
               name="email"
               type="email"
-              id="inputEmail4"
+              id="email"
               label="Email:"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -218,7 +218,7 @@ const FutsalCreate = () => {
             <CFormInput
               name="contact"
               type="number"
-              id="inputContact"
+              id="contact"
               label="Contact no:"
               value={contact}
               onChange={(e) => setContact(e.target.value)}
@@ -250,7 +250,7 @@ const FutsalCreate = () => {
           <CCol md={4}>
             <CFormInput
               name="street"
-              id="inputStreet"
+              id="street"
               label="Street:"
               value={street}
               onChange={(e) => setStreet(e.target.value)}
@@ -262,7 +262,7 @@ const FutsalCreate = () => {
           <CCol md={3}>
             <CFormInput
               name="pan"
-              id="inputNumber"
+              id="pan"
               label="Pan Number:"
               value={pan}
               onChange={(e) => setPan(e.target.value)}
@@ -275,8 +275,7 @@ const FutsalCreate = () => {
             <CFormInput
               name="file"
               type="file"
-              id="validationTextarea"
-              feedbackInvalid="Example invalid form file feedback"
+              id="file"
               aria-label="file example"
               value={file}
               label="Upload Ground Pic:"
@@ -317,7 +316,7 @@ const FutsalCreate = () => {
             <CFormInput
               name="ground"
               type="number"
-              id="inputGround"
+              id="ground"
               label="No. of Grounds:"
               value={ground}
               onChange={(e) => setGround(e.target.value)}
@@ -332,7 +331,7 @@ const FutsalCreate = () => {
               button={{ color: 'success', variant: 'outline' }}
               type="radio"
               name="status"
-              id="success-outlined"
+              id="status"
               label="Active"
               value={1}
               checked={status == 1}
@@ -342,7 +341,7 @@ const FutsalCreate = () => {
               button={{ color: 'danger', variant: 'outline' }}
               type="radio"
               name="status"
-              id="danger-outlined"
+              id="status"
               label="Inactive"
               value={0}
               checked={status == 0}
