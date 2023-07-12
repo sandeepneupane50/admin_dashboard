@@ -40,7 +40,7 @@
     { "id": 36, "name": "Lubhu", "districtId": 3 },
     { "id": 37, "name": "Pyutar", "districtId": 3 },
 
-    { "id": 37, "name": "Jutpani", "districtId": 4 },
+    { "id": 71, "name": "Jutpani", "districtId": 4 },
     { "id": 38, "name": "Khairahani", "districtId": 4 },
     { "id": 39, "name": "Meghauli", "districtId": 4 },
     { "id": 40, "name": "Patihani", "districtId": 4 },
@@ -77,5 +77,5 @@
     { "id": 68, "name": "Mangaltar", "districtId": 7 },
     { "id": 69, "name": "Panauti", "districtId": 7 },
     { "id": 70, "name": "Panchkhal", "districtId": 7 },
-    { "id": 71, "name": "Phalante", "districtId": 7 }
+    { "id": 72, "name": "Phalante", "districtId": 7 }
 ]
