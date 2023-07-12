@@ -1,0 +1,9 @@
+{
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTY4NzkzNjU5MywiZXhwIjoxNjg3OTQwMTkzLCJzdWIiOiIyIn0.b59ai2W65uhr28k3zj4ErLnanGqE0dTH7cJXGbrQ6s8",
+    "user": {
+      "email": "admin@gmail.com",
+      "username": "admin",
+      "confirmPassword": "admin",
+      "id": 2
+    }
+}

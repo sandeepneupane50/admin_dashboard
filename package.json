@@ -21,7 +21,8 @@
     "test": "react-scripts test",
     "test:cov": "npm test -- --coverage --watchAll=false",
     "test:debug": "react-scripts --inspect-brk test --runInBand",
-    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
+    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
+    "cypress": "cypress open"
   },
   "dependencies": {
     "@coreui/chartjs": "^3.1.1",
@@ -31,6 +32,7 @@
     "@coreui/react": "^4.6.0",
     "@coreui/react-chartjs": "^2.1.2",
     "@coreui/utils": "^2.0.1",
+    "axios": "^1.4.0",
     "chart.js": "^3.9.1",
     "classnames": "^2.3.2",
     "core-js": "^3.29.0",
@@ -48,6 +50,9 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
+    "cypress": "^12.16.0",
+    "json-server": "^0.17.3",
+    "json-server-auth": "^2.1.0",
     "prettier": "2.8.4",
     "react-scripts": "^5.0.1",
     "sass": "^1.58.3",

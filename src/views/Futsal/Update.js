@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CButton, CCol, CForm, CFormCheck, CFormInput, CFormSelect, CCard } from "@coreui/react";
+import { CButton, CCol, CForm, CFormCheck, CFormInput, CCard } from "@coreui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { addFusal } from 'src/util/apiroutes'
 import SelectedProvince from '../components/SelectProvince'
@@ -206,7 +206,7 @@ const FutsalUpdate = () => {
         <CForm className="row g-3" onSubmit={handleSubmit} method="UPDATE">
           <CCol xs={6}>
             <CFormInput
-              id="Name"
+              id="futsal"
               label="Futsal Name:"
               placeholder="Futsal Name"
               value={futsal}
@@ -221,7 +221,7 @@ const FutsalUpdate = () => {
 
           <CCol xs={6}>
             <CFormInput
-              id="Name"
+              id="owner"
               label="Owner Name:"
               placeholder="Futsal Owner Name"
               value={owner}
@@ -236,7 +236,7 @@ const FutsalUpdate = () => {
           <CCol md={4}>
             <CFormInput
               type="email"
-              id="inputEmail4"
+              id="email"
               label="Email:"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -248,7 +248,7 @@ const FutsalUpdate = () => {
           <CCol md={4}>
             <CFormInput
               type="number"
-              id="inputContact"
+              id="contact"
               label="Contact no:"
               value={contact}
               onChange={(e) => setContact(e.target.value)}
@@ -279,7 +279,7 @@ const FutsalUpdate = () => {
           </CCol>
           <CCol md={4}>
             <CFormInput
-              id="inputStreet"
+              id="street"
               label="Street:"
               value={street}
               onChange={(e) => setStreet(e.target.value)}
@@ -291,7 +291,7 @@ const FutsalUpdate = () => {
           </CCol>
           <CCol md={3}>
             <CFormInput
-              id="inputNumber"
+              id="pan"
               label="Pan Number:"
               value={pan}
               onChange={(e) => setPan(e.target.value)}
@@ -304,7 +304,7 @@ const FutsalUpdate = () => {
           <CCol md={3}>
             <CFormInput
               type="file"
-              id="validationTextarea"
+              id="file"
               feedbackInvalid="Example invalid form file feedback"
               aria-label="file example"
               label="Upload Ground Pic:"
@@ -341,11 +341,10 @@ const FutsalUpdate = () => {
             }
           </CCol>
 
-
           <CCol md={2}>
             <CFormInput
               type="number"
-              id="inputGround"
+              id="ground"
               label="No. of Grounds:"
               value={ground}
               onChange={(e) => setGround(e.target.value)}
@@ -360,7 +359,7 @@ const FutsalUpdate = () => {
               button={{ color: 'success', variant: 'outline' }}
               type="radio"
               name="status"
-              id="success-outlined"
+              id="status"
               label="Active"
               value={1}
               checked={status == 1}
@@ -370,7 +369,7 @@ const FutsalUpdate = () => {
               button={{ color: 'danger', variant: 'outline' }}
               type="radio"
               name="status"
-              id="danger-outlined"
+              id="status1"
               label="Inactive"
               value={0}
               checked={status == 0}

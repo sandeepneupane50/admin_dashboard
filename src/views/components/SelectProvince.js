@@ -17,12 +17,13 @@ const SelectedProvince = (props) => {
         }
       };
 
+
       useEffect(() => {
         fetchProvinces();
       }, []);
 
       useEffect(() => {
-        props.onChange(selectedProvince)
+        props.onChange(selectedProvince);
       }, [selectedProvince])
 
     return(

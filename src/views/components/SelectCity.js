@@ -42,7 +42,5 @@ const SelectedCity = (props) => {
         </CFormSelect>
     );
 }
-
-
 export default SelectedCity;
 

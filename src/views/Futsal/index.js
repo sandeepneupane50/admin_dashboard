@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Link, json } from 'react-router-dom';
-import { addFusal, locationUrl } from 'src/util/apiroutes';
+import { Link } from 'react-router-dom';
+import { addFusal } from 'src/util/apiroutes';
 import {
   CCard,
   CCardBody,
@@ -26,7 +26,6 @@ import {
 
 const Futsals = () => {
   const [details, setDetails] = useState([]);
-  const [cities, setCities] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
   const [totalCount, setTotalCount] = useState(0);
@@ -81,16 +80,7 @@ const Futsals = () => {
       });
   };
 
-  // // fetching cityname
-  // const fetchCities = async () => {
-  //   const response = await fetch(`${locationUrl}/cities`);
-  //   const data = await response.json();
-  //   setCities(data);
-  // }
 
-  // useEffect(() => {
-  //   fetchCities();
-  // }, [details]);
 
   useEffect(() => {
     fetchData();
@@ -157,6 +147,7 @@ const Futsals = () => {
                 <CForm onSubmit={handleSearch}>
                   <div className="btn-group me-2" >
                     <CFormInput
+                      id='search_input'
                       type="text"
                       size="sm"
                       placeholder="futsal..."
@@ -166,6 +157,7 @@ const Futsals = () => {
                   </div>
                   <div className="btn-group me-2"  >
                     <button
+                      id='futsal_search_button'
                       className="btn btn-outline-info"
                       type="submit"
                       size="sm"

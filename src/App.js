@@ -1,5 +1,8 @@
 import React, { Component, Suspense } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, Switch } from 'react-router-dom'
+import ProtectedRoute from './ProtectedRoute'
+import LoginForm from './authentication/LoginForm'
+import RegisterForm from './authentication/RegisterForm'
 import './scss/style.scss'
 
 const loading = (
@@ -17,7 +20,13 @@ class App extends Component {
       <BrowserRouter>
         <Suspense fallback={loading}>
           <Routes>
-            <Route path="*" name="Home" element={<DefaultLayout />} />
+            <Route path= '/login' name='LoginForm' element= {<LoginForm/>} />
+            <Route path= '/register' name='RegisterForm' element= {<RegisterForm/>}/>
+            <Route path="*" name="Home" element={
+                <ProtectedRoute>
+                    <DefaultLayout />
+                </ProtectedRoute>
+            } />
           </Routes>
         </Suspense>
       </BrowserRouter>

@@ -1,0 +1,81 @@
+{
+  "users": [
+    {
+      "email": "admin@gmail.com",
+      "password": "$2a$10$PEYsIVaDHou0iN6cbRJOturtLJl/Uptfjf/5xX8F.XQ2qpWCLadEK",
+      "username": "admin",
+      "confirmPassword": "admin",
+      "id": 2
+    },
+    {
+      "email": "lyrogo@mailinator.com",
+      "password": "$2a$10$oUvWC.OJyBzaZoItCGVF8.Mxj/x7tDBeldGOtFUJUY23tjhcNwnHe",
+      "username": "dewyfafofe",
+      "confirmPassword": "Pa$$w0rd!",
+      "id": 3
+    },
+    {
+      "email": "hova@mailinator.com",
+      "password": "$2a$10$LUgQ30AEn7ETi4.MhIO4XeIlepfSAnfTqdLEWl1dkhfQldUh.c/pm",
+      "username": "liduxasoj",
+      "confirmPassword": "Pa$$w0rd!",
+      "id": 4
+    },
+    {
+      "email": "sandeep.neupane.50@gmail.com",
+      "password": "$2a$10$g7e7/6yVnvUQ5Y56zM7Q1.2ML5xlGj1nWbOdBrZh7prbEyCGtIfGG",
+      "username": "ads",
+      "confirmPassword": "zxczxczx",
+      "id": 5
+    },
+    {
+      "email": "hifagipy@mailinator.com",
+      "password": "$2a$10$otm81FzigBdCvDs.KHAD7u9jv.pocpabF.TsFbkEQsHAZHOoMhfcW",
+      "username": "vyfosixu",
+      "confirmPassword": "Pa$$w0rd!",
+      "id": 6
+    },
+    {
+      "email": "fyjunor@mailinator.com",
+      "password": "$2a$10$go1UqsC/J069abJb5T7irOWu6OX.ZGmJ601fNvgiGlFKR1GQxkIZe",
+      "username": "cyqatun",
+      "confirmPassword": "Pa$$w0rd!",
+      "id": 7
+    },
+    {
+      "email": "dozo@mailinator.com",
+      "password": "$2a$10$yXu7Y32BzLxNz6RSwfod7eFQtCpgDQftymfN7CyhVXUPRIBWdpJwm",
+      "username": "byjicy",
+      "confirmPassword": "Pa$$w0rd!",
+      "id": 8
+    },
+    {
+      "email": "dapez@mailinator.com",
+      "password": "$2a$10$p.AJPr5EWmGFAooJpEaR8uCv2Qg7C4FN2HzDzJwK93Y9UG563RziO",
+      "username": "gacukomasa",
+      "confirmPassword": "Pa$$w0rd!",
+      "id": 9
+    },
+    {
+      "email": "hisuq@mailinator.com",
+      "password": "$2a$10$deW36HhIMi5zGgtG/u3exe5sQO68teJbnnNCFPzYnB.7t3ONbbnk6",
+      "username": "kujexy",
+      "confirmPassword": "Pa$$w0rd!",
+      "id": 10
+    },
+    {
+      "email": "tareh@mailinator.com",
+      "password": "$2a$10$RRabqAPtgO6SoWKWi4liH.Zv5zA11RITbjp9up8NSu/bzSteO6tJW",
+      "username": "sakit",
+      "confirmPassword": "Pa$$w0rd!",
+      "id": 11
+    },
+    {
+      "email": "kuxivub@mailinator.com",
+      "password": "$2a$10$IeKPX9Zstwy/iO5AEksmzObQqUlLtiVxfg6NZlSJhCcsnRUj0QU/a",
+      "username": "medef",
+      "confirmPassword": "Pa$$w0rd!",
+      "id": 12
+    }
+  ]
+}

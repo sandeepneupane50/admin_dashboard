@@ -1,0 +1,93 @@
+[
+
+    { "id": 1, "name": "Kathmandu", "provinceId": 1 },
+    { "id": 2, "name": "Bhaktapur", "provinceId": 1 },
+    { "id": 3, "name": "Lalitpur", "provinceId": 1 },
+    { "id": 4, "name": "Chitwan", "provinceId": 1 },
+    { "id": 5, "name": "Dhading", "provinceId": 1 },
+    { "id": 6, "name": "Dolakha", "provinceId": 1 },
+    { "id": 7, "name": "Kavrepalanchok", "provinceId": 1 },
+    { "id": 8, "name": "Makwanpur", "provinceId": 1 },
+    { "id": 9, "name": "Nuwakot", "provinceId": 1 },
+    { "id": 10, "name": "Ramechhap", "provinceId": 1 },
+    { "id": 11, "name": "Rasuwa", "provinceId": 1 },
+    { "id": 12, "name": "Sindhupalchok", "provinceId": 1 },
+    { "id": 13, "name": "Kavrepalanchok", "provinceId": 1 },
+
+
+    { "id": 14, "name": "Kapilvastu", "provinceId": 2 },
+    { "id": 15, "name": "Nawalparasi West", "provinceId": 2 },
+    { "id": 16, "name": "Rupandehi", "provinceId": 2 },
+    { "id": 17, "name": "Arghakanchi", "provinceId": 2 },
+    { "id": 18, "name": "Gulmi", "provinceId": 2 },
+    { "id": 19, "name": "Palpa", "provinceId": 2 },
+    { "id": 20, "name": "Dang", "provinceId": 2 },
+    { "id": 21, "name": "Puythan", "provinceId": 2 },
+    { "id": 22, "name": "Rolpa", "provinceId": 2 },
+    { "id": 23, "name": "Eastern Rukum", "provinceId": 2 },
+    { "id": 24, "name": "Banke", "provinceId": 2 },
+    { "id": 25, "name": "Bardiya", "provinceId": 2 },
+
+
+
+    { "id": 26, "name": "Baglung", "provinceId": 3 },
+    { "id": 27, "name": "Gorkha", "provinceId": 3 },
+    { "id": 28, "name": "Kaski", "provinceId": 3 },
+    { "id": 29, "name": "Lamjung", "provinceId": 3 },
+    { "id": 30, "name": "Manang", "provinceId": 3 },
+    { "id": 31, "name": "Mustang", "provinceId": 3 },
+    { "id": 32, "name": "Myagdi", "provinceId": 3 },
+    { "id": 33, "name": "Nawalparasi East", "provinceId": 3 },
+    { "id": 34, "name": "Parbat", "provinceId": 3 },
+    { "id": 35, "name": "Syangja", "provinceId": 3 },
+    { "id": 36, "name": "Tanahun", "provinceId": 3 },
+
+
+    { "id": 37, "name": "Parsa", "provinceId": 4 },
+    { "id": 38, "name": "Bara", "provinceId": 4 },
+    { "id": 39, "name": "Rautahat", "provinceId": 4 },
+    { "id": 40, "name": "Sarlahi", "provinceId": 4 },
+    { "id": 41, "name": "Dhanusha", "provinceId": 4 },
+    { "id": 42, "name": "Siraha", "provinceId": 4 },
+    { "id": 43, "name": "Mahottari", "provinceId": 4 },
+    { "id": 44, "name": "Saptari", "provinceId": 4 },
+
+    { "id": 45, "name": "Bhojpur", "provinceId": 5 },
+    { "id": 46, "name": "Dhankuta", "provinceId": 5 },
+    { "id": 47, "name": "Ilam", "provinceId": 5 },
+    { "id": 48, "name": "Jhapa", "provinceId": 5 },
+    { "id": 49, "name": "Khotang", "provinceId": 5 },
+    { "id": 50, "name": "Morang", "provinceId": 5 },
+    { "id": 51, "name": "Okhaldhunga", "provinceId": 5 },
+    { "id": 52, "name": "Panchthar", "provinceId": 5 },
+    { "id": 53, "name": "Sankhuwasabha", "provinceId": 5 },
+    { "id": 54, "name": "Solukhumbhu", "provinceId": 5 },
+    { "id": 55, "name": "Sunsari", "provinceId": 5 },
+    { "id": 56, "name": "Taplejung", "provinceId": 5 },
+    { "id": 57, "name": "Terathum", "provinceId": 5 },
+    { "id": 58, "name": "Udayapur", "provinceId": 5 },
+
+
+
+    { "id": 59, "name": "Western Rukum", "provinceId": 6 },
+    { "id": 60, "name": "Salyan", "provinceId": 6 },
+    { "id": 61, "name": "Dolpa", "provinceId": 6 },
+    { "id": 62, "name": "Humla", "provinceId": 6 },
+    { "id": 63, "name": "Jumla", "provinceId": 6 },
+    { "id": 64, "name": "Kalikot", "provinceId": 6 },
+    { "id": 65, "name": "Mugu", "provinceId": 6 },
+    { "id": 66, "name": "Surkhet", "provinceId": 6 },
+    { "id": 67, "name": "Dailekh", "provinceId": 6 },
+    { "id": 68, "name": "Jajarkot", "provinceId": 6 },
+
+    { "id": 69, "name": "Kailali", "provinceId": 7 },
+    { "id": 70, "name": "Achham", "provinceId": 7 },
+    { "id": 71, "name": "Doti", "provinceId": 7 },
+    { "id": 72, "name": "Bajhang", "provinceId": 7 },
+    { "id": 73, "name": "Bajura", "provinceId": 7 },
+    { "id": 74, "name": "Kanchanpur", "provinceId": 7 },
+    { "id": 75, "name": "Dadeldhura", "provinceId": 7 },
+    { "id": 76, "name": "Baitadi", "provinceId": 7 },
+    { "id": 77, "name": "Darchula", "provinceId": 7 }
+
+]
