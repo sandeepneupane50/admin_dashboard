@@ -25,7 +25,7 @@ const SelectedDistrict = (props) => {
 
       useEffect(() => {
         props.onChange(selectedDistrict)
-      }, [selectedDistrict])
+      }, [selectedDistrict]);
     
     return ( 
         <CFormSelect
@@ -44,5 +44,4 @@ const SelectedDistrict = (props) => {
             </CFormSelect>
      );
 }
- 
 export default SelectedDistrict;

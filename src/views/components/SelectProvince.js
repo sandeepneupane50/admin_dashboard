@@ -31,7 +31,7 @@ const SelectedProvince = (props) => {
               name="selectedprovince"
               id="province"
               label="Province:"
-              value={selectedProvince}
+              value={props.selectedProvince}
               onChange={(e) =>setSelectedProvince(e.target.value)}>
               <option value="">select province</option>
               {provinces.map((province) => (

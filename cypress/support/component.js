@@ -20,15 +20,28 @@ import './commands'
 // require('./commands')
 
 import { mount } from 'cypress/react18'
-import { MemoryRouter } from 'react-router-dom'
+import { Route, Routes, MemoryRouter } from 'react-router-dom'
 
 Cypress.Commands.add('mount', (component, options = {}) => {
-    const { routerProps = { initialEntries: ['/'] }, ...mountOptions } = options
-  
-    const wrapped = <MemoryRouter {...routerProps}>{component}</MemoryRouter>
-  
-    return mount(wrapped, mountOptions)
-  })
+  const { routerProps = { initialEntries: ['/'] }, ...mountOptions } = options
 
+  const wrapped = <MemoryRouter {...routerProps}>{component}</MemoryRouter>
+
+  return mount(wrapped, mountOptions)
+})
+
+Cypress.Commands.add('mountWithParams', (component, route, path, options = {}) => {
+  window.history.pushState({}, '', route)
+
+  const { routerProps = { initialEntries: [route] }, ...mountOptions } = options
+
+  const wrapped = <MemoryRouter {...routerProps}>
+    <Routes>
+      <Route element={component} path={path} />
+    </Routes>
+  </MemoryRouter>
+
+  return mount(wrapped, mountOptions)
+})
 // Example use:
 // cy.mount(<MyComponent />)

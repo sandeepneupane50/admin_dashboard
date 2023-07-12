@@ -201,7 +201,7 @@ const BookingForm = () => {
         <CForm className="row g-3" onSubmit={handleSubmit} method="POST">
           <CCol xs={4}>
             <CFormInput
-              id="Client"
+              id="client"
               label="Team/Client Name:"
               placeholder="Team/Client Name"
               value={client}
@@ -214,7 +214,7 @@ const BookingForm = () => {
           <CCol md={4}>
             <CFormInput
               type="number"
-              id="inputContact"
+              id="contact"
               label="Contact no:"
               value={contact}
               onChange={(e) => setContact(e.target.value)}
@@ -266,7 +266,7 @@ const BookingForm = () => {
             <CFormInput
               label="Booking Date:"
               type="date"
-              id="bookime"
+              id="bookDate"
               value={bookdate}
               onChange={(e) => setBookDate(e.target.value)}
             />
@@ -279,6 +279,7 @@ const BookingForm = () => {
             <Select
              isMulti
              name="colors"
+             id='timeSlots'
              options={slotOptions()} 
              className="basic-multi-select" 
              classNamePrefix="select" 
@@ -294,7 +295,7 @@ const BookingForm = () => {
           <CCol md={4}>
             <CFormInput
               type="number"
-              id="inputGround"
+              id="ground"
               label="Ground:"
               value={ground}
               onChange={(e) => setGround(e.target.value)}
@@ -305,7 +306,7 @@ const BookingForm = () => {
           </CCol>
           <CCol xs={4}>
             <CFormSelect
-              id="inputPayment"
+              id="payment"
               label="Payment Method:"
               value={paymentmethod}
               onChange={(e) => setPaymentmethod(e.target.value)}>
@@ -328,7 +329,7 @@ const BookingForm = () => {
                 button={{ color: 'success', variant: 'outline' }}
                 type="radio"
                 name="status"
-                id="success-outlined"
+                id="status"
                 label="Confirm"
                 value={1}
                 checked={status == 1}
@@ -338,7 +339,7 @@ const BookingForm = () => {
                 button={{ color: 'warning', variant: 'outline' }}
                 type="radio"
                 name="status"
-                id="danger-outlined"
+                id="status-1"
                 label="Hold"
                 value={0}
                 checked={status == 0}

@@ -1,10 +1,19 @@
 import React from 'react'
 import FutsalCreate from './Create'
+import { locationUrl } from 'src/util/apiroutes'
 
 describe('<FutsalCreate />', () => {
   it('renders', () => {
-    // see: https://on.cypress.io/mounting-react
     cy.mount(<FutsalCreate />)
+    cy.intercept(`${locationUrl}/provinces`, {
+      fixture: 'provinces'
+    }).as('provinces');
+    cy.intercept(`${locationUrl}/districts?provinceId=1`, {
+      fixture: 'districts'
+    }).as('districts');
+    cy.intercept(`${locationUrl}/cities?districtId=1`, {
+      fixture: 'cities'
+    }).as('cities');
     cy.get('#futsal').type('Abc Futsal');
     cy.get('#owner').type('Ram Lal Thapa');
     cy.get('#email').type('abc@gmail.com');

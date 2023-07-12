@@ -14,7 +14,7 @@
       "openingTime": "09:00",
       "closingTime": "21:00",
       "ground": "1",
-      "status": "0",
+      "status": "1",
       "timeSlots": [
         "09:00-10:00",
         "10:00-11:00",
