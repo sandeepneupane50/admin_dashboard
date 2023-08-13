@@ -5,10 +5,11 @@ import { addFusal } from 'src/util/apiroutes'
 import SelectedProvince from '../components/SelectProvince'
 import SelectedDistrict from '../components/SelectDistrict'
 import SelectedCity from '../components/SelectCity'
+import axios from 'axios'
 
 
 const FutsalCreate = () => {
-  const [futsal, setFutsal] = useState('')
+  const [futsalname, setFutsalName] = useState('');
   const [owner, setOwner] = useState('')
   const [email, setEmail] = useState('')
   const [contact, setContact] = useState('')
@@ -17,7 +18,7 @@ const FutsalCreate = () => {
   const [selectedCity, setSelectedCity] = useState('')
   const [street, setStreet] = useState('')
   const [pan, setPan] = useState('')
-  const [file, setFile] = useState('')
+  const [file, setFile] = useState(null)
   const [status, setStatus] = useState('')
   const [openingTime, setOpeningTime] = useState('')
   const [closingTime, setClosingTime] = useState('')
@@ -64,14 +65,13 @@ const FutsalCreate = () => {
       const slotEnd = formatTime(start);
       slots.push(`${slotStart}-${slotEnd}`);
     }
-
     return slots;
   };
 
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (futsal.length < 3) {
+    if (futsalname.length < 3) {
       setError({
         futsal: "invalid name"
       })
@@ -83,7 +83,7 @@ const FutsalCreate = () => {
       setError({
         email: "invalid email"
       })
-    } else if (contact.length != 10) {
+    } else if (contact.toString().length != 10) {
       setError({
         contact: "it must be of 10 digit"
       })
@@ -133,7 +133,7 @@ const FutsalCreate = () => {
       })
     } else {
       const detail = {
-        futsal,
+        futsalname,
         owner,
         email,
         contact,
@@ -160,31 +160,33 @@ const FutsalCreate = () => {
       };
       setTimeSlots(slots);
 
-      fetch(`${addFusal}/details`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedDetail),
-      }).then(() => {
+      axios.post(`${addFusal}/futsals/create`, {
+        ...updatedDetail
+      }, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(() => {
         navigate('/futsals')
-
       })
     }
   }
   return (
     <div>
       <CCard style={{ padding: '3rem' }}>
-        <CForm className="row g-3" onSubmit={handleSubmit} method="POST">
+        <CForm className="row g-3" onSubmit={handleSubmit} method="POST" >
           <CCol xs={6}>
             <CFormInput
-              name="futsal"
-              id="futsal"
+              name="futsalname"
+              id="futsalname"
               label="Futsal Name:"
               placeholder="Futsal Name"
-              value={futsal}
-              onChange={(e) => setFutsal(e.target.value)}
+              value={futsalname}
+              onChange={(e) => setFutsalName(e.target.value)}
             />
             {error.futsal ?
-              <label className="create-error">{error.futsal}</label> : ''
+              <label className="create-error">{error.futsalname}</label> : ''
             }
           </CCol>
 
@@ -277,9 +279,8 @@ const FutsalCreate = () => {
               type="file"
               id="file"
               aria-label="file example"
-              value={file}
               label="Upload Ground Pic:"
-              onChange={(e) => setFile(e.target.value)}
+              onChange={(e) => setFile(e.target.files[0])}
             />
             {error['file'] ?
               <label className="create-error">{error.file}</label> : ''
@@ -341,7 +342,7 @@ const FutsalCreate = () => {
               button={{ color: 'danger', variant: 'outline' }}
               type="radio"
               name="status"
-              id="status"
+              id="status-1"
               label="Inactive"
               value={0}
               checked={status == 0}

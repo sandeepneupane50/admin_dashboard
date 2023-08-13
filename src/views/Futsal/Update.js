@@ -5,10 +5,11 @@ import { addFusal } from 'src/util/apiroutes'
 import SelectedProvince from '../components/SelectProvince'
 import SelectedDistrict from '../components/SelectDistrict'
 import SelectedCity from '../components/SelectCity'
+import axios from "axios";
 
 
 const FutsalUpdate = () => {
-  const [futsal, setFutsal] = useState('')
+  const [futsalname, setFutsalName] = useState('')
   const [owner, setOwner] = useState('')
   const [email, setEmail] = useState('')
   const [contact, setContact] = useState('')
@@ -17,7 +18,7 @@ const FutsalUpdate = () => {
   const [selectedCity, setSelectedCity] = useState('')
   const [street, setStreet] = useState('')
   const [pan, setPan] = useState('')
-  const [file, setFile] = useState('')
+  const [file, setFile] = useState(null)
   const [status, setStatus] = useState('')
   const [openingTime, setOpeningTime] = useState('')
   const [closingTime, setClosingTime] = useState('')
@@ -68,12 +69,12 @@ const FutsalUpdate = () => {
 
   const { id } = useParams();
   useEffect(() => {
-    fetch(`${addFusal}/details?id=${id}`)
+    fetch(`${addFusal}/futsals?id=${id}`)
       .then((response) => response.json())
       .then((data) => {
         if (data.length > 0) {
-          const detail = data[0];
-          setFutsal(detail.futsal);
+          const detail = data.find(detail => detail._id === id);
+          setFutsalName(detail.futsalname);
           setOwner(detail.owner);
           setEmail(detail.email);
           setContact(detail.contact);
@@ -94,12 +95,12 @@ const FutsalUpdate = () => {
       });
   }, [id]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (futsal.length < 3) {
+    if (futsalname.length < 3) {
       setError({
-        futsal: "invalid name"
+        futsalname: "invalid name"
       })
     } else if (owner.length < 3) {
       setError({
@@ -109,7 +110,7 @@ const FutsalUpdate = () => {
       setError({
         email: "invalid email"
       })
-    } else if (contact.length != 10) {
+    } else if (contact.toString().length != 10) {
       setError({
         contact: "it must be of 10 digit"
       })
@@ -159,7 +160,7 @@ const FutsalUpdate = () => {
       })
     } else {
       const details = {
-        futsal,
+        futsalname,
         owner,
         email,
         contact,
@@ -186,18 +187,24 @@ const FutsalUpdate = () => {
       };
       setTimeSlots(slots);
 
-      fetch(`${addFusal}/details/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedDetail),
-      })
-        .then(() => {
-          alert("Successfully updated..");
-          navigate("/futsals");
+      try{
+        const response = await axios.patch(`${addFusal}/futsals/${id}`, {
+          ...updatedDetail
+        }, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         })
-        .catch((error) => {
+        .then(() => {
+          navigate('/futsals')
+        })
+          .then(() => {
+            alert("Successfully updated..");
+            navigate("/futsals");
+          })
+      } catch(error) {
           console.error("Error:", error);
-        });
+        };
     }
   };
   return (
@@ -206,16 +213,16 @@ const FutsalUpdate = () => {
         <CForm className="row g-3" onSubmit={handleSubmit} method="UPDATE">
           <CCol xs={6}>
             <CFormInput
-              id="futsal"
+              id="futsalname"
               label="Futsal Name:"
               placeholder="Futsal Name"
-              value={futsal}
-              name="futsal"
-              onChange={(e) => setFutsal(e.target.value)}
+              value={futsalname}
+              name="futsalname"
+              onChange={(e) => setFutsalName(e.target.value)}
 
             />
-            {error.futsal ?
-              <label className="create-error">{error.futsal}</label> : ''
+            {error.futsalname ?
+              <label className="create-error">{error.futsalname}</label> : ''
             }
           </CCol>
 
@@ -303,13 +310,12 @@ const FutsalUpdate = () => {
           </CCol>
           <CCol md={3}>
             <CFormInput
-              type="file"
-              id="file"
-              feedbackInvalid="Example invalid form file feedback"
-              aria-label="file example"
-              label="Upload Ground Pic:"
-              onChange={(e) => setFile(e.target.value)}
-              name="file"
+               name="file"
+               type="file"
+               id="file"
+               aria-label="file example"
+               label="Upload Ground Pic:"
+               onChange={(e) => setFile(e.target.files[0])}
             />
             {error['file'] ?
               <label className="create-error">{error.file}</label> : ''

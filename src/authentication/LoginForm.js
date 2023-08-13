@@ -3,38 +3,35 @@ import { Link } from 'react-router-dom'
 import { CButton, CCard, CCardBody, CCardGroup, CCol, CContainer, CForm, CFormInput, CInputGroup, CInputGroupText, CRow } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
-import { addUser } from 'src/util/apiroutes'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import { addUser } from 'src/util/apiroutes'
 
 const LoginForm = () => {
-  const[username, setUsername]= useState();
+  const[email, setEmail]= useState('');
   const [password, setPassword]= useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      // Call your login API passing the username and password
+      let response = await axios.post(`${addUser}/login`, {
+        email: email, password: password
+      })
+      // Assuming your login API returns a token on successful login
+      const token = response.data.access_token;
+      // const username = response.data.username;
 
-    fetch(`${addUser}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept' : 'application/json' },
-      body: JSON.stringify({ email: username, password })
-    })
-    .then((response)=>response.json())
-    .then((response)=>{
-      const token = response.accessToken;
-      if (!token) {
-          alert('Unable to login. Please try after some time.');
-          return;
-      }
-      localStorage.clear();
-      localStorage.setItem('user-token', token);
-      setTimeout(() => {
-          navigate('/');
-      }, 500);
-    }).catch((error) => {
-      alert("Oops! Some error occured.", error);
-  });
-      
+      // Store the token in localStorage (you may use cookies as well)
+      localStorage.setItem('token', token);
+
+      // Redirect the user to the home/dashboard page after successful login
+      navigate('/');
+    } catch (error) {
+      // Handle login errors here, e.g., display an error message
+      console.error('Login error:', error);
+    }
   }
 
 
@@ -54,13 +51,14 @@ const LoginForm = () => {
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
                       <CFormInput
-                       placeholder="Username"
-                       autoComplete="username"
-                       name="username"
-                       value={username}
+                       placeholder="Email"
+                       autoComplete="Email"
+                       name="email"
+                       value={email}
                        id='email'
                        type="email"
-                       onChange={(e)=>setUsername(e.target.value)}
+                       onChange={(e)=>setEmail(e.target.value)}
+                       required
                         />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
@@ -75,6 +73,7 @@ const LoginForm = () => {
                         value={password}
                         id='password'
                         onChange={(e)=>setPassword(e.target.value)}
+                        required
                       />
                     </CInputGroup>
                     <CRow>

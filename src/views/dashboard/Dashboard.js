@@ -7,7 +7,7 @@ const Dashboard = () => {
 
   const [details, setDetails] = useState([]);
   useEffect(() => {
-    fetch(`${addFusal}/details`)
+    fetch(`${addFusal}/futsals`)
       .then(res => {
         return res.json()
       })

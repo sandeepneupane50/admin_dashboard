@@ -6,6 +6,7 @@ import SelectedProvince from '../components/SelectProvince'
 import SelectedDistrict from '../components/SelectDistrict'
 import SelectedCity from '../components/SelectCity'
 import Select from 'react-select'
+import axios from 'axios';
 
 const BookingEdit = () => {
   const [client, setClient] = useState('')
@@ -40,20 +41,26 @@ const BookingEdit = () => {
   }
   
   const fetchFutsals = async () => {
-    try {
-      const response = await fetch(`${addFusal}/details?city=${selectedCity}&status=1`);
-      const data = await response.json();
-      const futsalNames = data.map((futsal) => ({ id: futsal.id, name: futsal.futsal }));
+    if(!selectedCity) {
+      return;
+    }
+    try{
+      let response = await axios.get(`${addFusal}/bookings/form/futsals?city=${selectedCity}&status=1`);
+      const futsals = response.data;
+      const futsalNames = futsals.map((futsal) => ({ id: futsal._id, name: futsal.futsalname}))
       setFutsals(futsalNames);
     } catch (error) {
-      console.error('Error fetching futsals:', error);
-    }
+        console.error('Error fetching futsals:', error);
+      }
   };
 
   // fetching timeslots
   const fetchSlots = async () => {
     try {
-      const response = await fetch(`${addFusal}/details?id=${selectedFutsal}`)
+      if(!selectedFutsal){
+        return;
+      }
+      const response = await fetch(`${addFusal}/futsals?id=${selectedFutsal}`)
       const data = await response.json();
       if(data.length > 0) {
         const timeSlots = data[0]['timeSlots'];
@@ -71,11 +78,11 @@ const BookingEdit = () => {
   }
 
   async function fetchData() {
-    const response = await fetch(`${bookFutsal}/books?futsal=${selectedFutsal}&bookdate=${bookdate}`);
-    const data = await response.json();
+    let response = await axios.get(`${bookFutsal}/bookings/form/bookedSlots?futsal=${selectedFutsal}&bookdate=${bookdate}`);
+    const data = response.data
     let bookedSlots = new Set();
     data.forEach(element => {
-      element.slots.forEach(slot => {
+        element.slots.forEach(slot => {
         bookedSlots.add(slot)
       })
     });
@@ -116,12 +123,17 @@ const BookingEdit = () => {
   }, [selectedFutsal]);
 
   const { id } = useParams();
+
+  // const fetchBookings = async() => {
+
+  // }
   const fetchBookings = () => {
-    fetch(`${bookFutsal}/books?id=${id}`)
+    fetch(`${bookFutsal}/bookings?id=${id}`)
       .then((response) => response.json())
       .then((data) => {
         if (data.length > 0) {
-          const book = data[0];
+          // const book = data[0];
+          const book = data.docs.find(book => book._id === id);
           setClient(book.client);
           setContact(book.contact);
           setSelectedProvince(book.province);
@@ -146,7 +158,7 @@ const BookingEdit = () => {
       setError({
         client: "invalid name"
       })
-    } else if (contact.length != 10) {
+    } else if (contact.toString().length != 10) {
       setError({
         contact: "it must be of 10 digit"
       })
@@ -203,21 +215,15 @@ const BookingEdit = () => {
       paymentmethod,
       status,
     }
-  
-    try {
-      const response = await fetch(`${bookFutsal}/books/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(bookData)
-      });
-
-      if (response.ok) {
-        navigate('/bookings');
-      } else {
-        setError(true);
-      }
+    try{
+      const response = await axios.patch(`${bookFutsal}/bookings/${id}`, {
+        headers: { "Content-Type": "application/json" },
+        body: bookData,
+      })
+      .then(() => {
+        alert("Successfully updated..");
+        navigate("/bookings");
+      })
     } catch (error) {
       console.error('Error updating book:', error);
       setError(true);
@@ -233,7 +239,7 @@ const BookingEdit = () => {
           <CForm className="row g-3" onSubmit={handleSubmit} method="POST">
             <CCol xs={4}>
               <CFormInput
-                id="Client"
+                id="client"
                 label="Team/Client Name:"
                 placeholder="Team/Client Name"
                 value={client}

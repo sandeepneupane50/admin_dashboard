@@ -37,25 +37,11 @@ const RegisterForm = () => {
             setError({
                 confirmPassword:"doesnot matched"
             })
-        }else {
-            // const user = {
-            //     username,
-            //     email,
-            //     password,
-            //     confirmPassword
-            // }
-    
-            axios.post(`${addUser}/users`, {
-                // method: 'POST',
-                // headers: { 'Content-Type': 'application/json' },
-                // body: JSON.stringify(user),
-
+        }else {  
+            axios.post(`${addUser}/register`, {
                 username: username,
                 email: email,
-                password: password,
-                confirmPassword: confirmPassword
-                
-
+                password: password
             }).then((response)=>{
                 navigate('/login');
             })

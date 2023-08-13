@@ -1,23 +1,26 @@
 import { CFormSelect } from "@coreui/react";
 import { useState, useEffect } from "react";
 import { locationUrl } from "src/util/apiroutes";
+import axios from "axios";
 
 const SelectedCity = (props) => {
     const [cities, setCities] = useState([]);
     const [selectedCity, setSelectedCity] = useState('');
 
     const fetchCities = async () => {
-        if (!props.selectedDistrict) {
-            return; 
-          }
         try {
-            const response = await fetch(`${locationUrl}/cities?districtId=${props.selectedDistrict}`);
-            const data = await response.json();
-            setCities(data);
+          // Call your login API passing the username and password
+          let response = await axios.get(`${locationUrl}/cities?district_id=${props.selectedDistrict}`)
+  
+          const cities = response.data;
+        //   console.log(response);
+          setCities(cities);
+  
         } catch (error) {
-            console.error('Error fetching districts:', error);
+          // Handle login errors here, e.g., display an error message
+          console.error('Loading error:', error);
         }
-    }
+        };
     useEffect(() => {
         fetchCities();
     }, [props.selectedDistrict]);
@@ -35,7 +38,7 @@ const SelectedCity = (props) => {
             onChange={(e) => setSelectedCity(e.target.value)}>
             <option value="">select city</option>
             {cities.map((city) => (
-                <option key={city.id} value={city.id}>
+                <option key={city._id} value={city._id}>
                     {city.name}
                 </option>
             ))}

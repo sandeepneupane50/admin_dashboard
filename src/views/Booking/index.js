@@ -1,52 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { bookFutsal } from 'src/util/apiroutes';
-import {
-  CCard,
-  CCardBody,
-  CCardHeader,
-  CCol,
-  CRow,
-  CTable,
-  CTableBody,
-  CTableDataCell,
-  CTableHead,
-  CTableHeaderCell,
-  CTableRow,
-  CButton,
-  CButtonGroup,
-  CPagination,
-  CPaginationItem,
-  CFormInput,
-  CForm,
-  CFormSelect,
-} from '@coreui/react';
-
-
+import { CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow, CButton, CButtonGroup, CPagination, CPaginationItem, CFormInput, CFormSelect } from '@coreui/react';
+import axios from 'axios';
 
 const Bookings = () => {
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState({docs: []});
   const [currentPage, setCurrentPage] = useState(1);
-  const recordsPerPage = 10;
-  const [totalCount, setTotalCount] = useState(0);
   const [npage, setNPage] = useState(0);
   const [inputSearch, setInputSearch] = useState('');
   const [inputSearchStatus, setInputSearchStatus] = useState('');
 
   // search bar
-
-  const handleSearch = async (e) => {
-    e.preventDefault();
+  const handleSearch = async () => {
     try {
-      const response = await fetch(`${bookFutsal}/books?client=${inputSearch}`);
-      const data = await response.json();
+      const response = await axios.get(`${bookFutsal}/bookings?page=${currentPage}&client=${inputSearch}`);
+      const data = await response.data;
       setBooks(data);
     }
     catch (error) {
       console.error("error fetching data:", error);
     }
+  }
+  useEffect(() => {
+    if(inputSearch != '') {
+      const debounce = setTimeout(() => {
+        handleSearch()
+      }, 1000);
 
+      return () => {
+        clearTimeout(debounce);
+      }
+    }
+  }, [inputSearch]);
 
+  const handleChange = (e) =>{
+    const value = e.target.value;
+    setInputSearch(value);
+    // debounceOnChange(value);
   }
 
   const handleReset = async () => {
@@ -55,11 +46,10 @@ const Bookings = () => {
   }
 
   // Sort bar
-
   const handleStatusChange = async (e) => {
     try {
-      const response = await fetch(`${bookFutsal}/books?status=${e.target.value}`);
-      const data = await response.json();
+      const response = await axios.get(`${bookFutsal}/bookings?page=${currentPage}&status=${e.target.value}`);
+      const data = await response.data;
       setBooks(data);
     }
     catch (error) {
@@ -67,73 +57,43 @@ const Bookings = () => {
     }
   }
 
-
-
   useEffect(() => {
     fetchData();
   }, [currentPage]);
 
-  const fetchData = () => {
-    const startIndex = (currentPage - 1) * recordsPerPage;
-    const endIndex = startIndex + recordsPerPage;
-    fetch(`${bookFutsal}/books?_sort=id&_order=desc&_start=${startIndex}&_end=${endIndex}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setBooks(data);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
-  };
-
-
-
-  const handleDelete = (book) => {
-    fetch(`${bookFutsal}/books/${book.id}`, {
-      method: 'DELETE'
-    })
-      .then(() => {
-        console.log('Data deleted successfully');
-        fetchData();
-      })
-      .catch((error) => {
-        console.error('Error deleting:', error);
-      });
-  };
-
-  useEffect(() => {
-    fetchTotalCount();
-  }, []);
-
-
-  const fetchTotalCount = () => {
-    fetch(`${bookFutsal}/books`)
-      .then((res) => res.headers.get('X-Total-Count'))
-      .then((count) => {
-        setTotalCount(count);
-        setNPage(Math.ceil(count / recordsPerPage));
-      })
-      .catch((error) => {
-        console.error('Error fetching total count:', error);
-      });
-  };
-
-  const prePage = () => {
-    if (currentPage !== 1) {
-      setCurrentPage(currentPage - 1);
+  const fetchData = async() => {
+    try{
+      const response = await axios.get(`${bookFutsal}/bookings?page=${currentPage}`);
+      const data = response.data;
+      setBooks(data);
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
     }
   };
 
-  const changeCPage = (id) => {
-    setCurrentPage(id);
+  const handleDelete =async (bookingId) => {
+    try {
+      const response = await axios.delete(`${bookFutsal}/bookings/${bookingId}`);
+      console.log('Deleted booking:', response.data);
+      fetchData()
+    } catch (error) {
+      console.error('Error deleting booking:', error);
+      // Handle error and show an error message on the frontend.
+    }
   };
 
+ 
+
+const prePage = () => {
+    if(books.hasPrevPage == true) {
+      setCurrentPage(books.prevPage);
+    }
+  };
   const nextPage = () => {
-    if (currentPage != npage) {
-      setCurrentPage(currentPage + 1);
+    if(books.hasNextPage == true) {
+      setCurrentPage(books.nextPage);
     }
   };
-
 
   const numbers = [...Array(npage).keys()].map((n) => n + 1);
   return (
@@ -143,25 +103,16 @@ const Bookings = () => {
           <CRow className="justify-content-start" >
             <CCol>
               <div className="btn-toolbar" >
-                <CForm onSubmit={handleSearch}>
                   <div className="btn-group me-2" >
-                    <CFormInput
+                  <CFormInput
+                      id='search_input'
                       type="text"
                       size="sm"
-                      placeholder="bookings..."
+                      placeholder="booking..."
                       value={inputSearch}
-                      onChange={(e) => setInputSearch(e.target.value)}
+                      onChange={handleChange}
                     />
                   </div>
-                  <div className="btn-group me-2"  >
-                    <button
-                      className="btn btn-outline-info"
-                      type="submit"
-                      size="sm"
-                    >Search
-                    </button>
-                  </div>
-                </CForm>
                 <div className="btn-group me-2">
                   <button
                     type="button"
@@ -205,7 +156,7 @@ const Bookings = () => {
           <CTable>
             <CTableHead>
               <CTableRow>
-                <CTableHeaderCell scope="col">S.N</CTableHeaderCell>
+                {/* <CTableHeaderCell scope="col">S.N</CTableHeaderCell> */}
                 <CTableHeaderCell scope="col">Team/Client</CTableHeaderCell>
                 <CTableHeaderCell scope="col">Contact</CTableHeaderCell>
                 <CTableHeaderCell scope="col">Futsal Booked</CTableHeaderCell>
@@ -215,20 +166,21 @@ const Bookings = () => {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {books.map((book, index) => (
+              {books.docs.map((book, index) => (
                 <CTableRow key={book.id}>
-                  <CTableHeaderCell scope="row">{book.id}</CTableHeaderCell>
+                  {/* <CTableHeaderCell scope="row">{book.id}</CTableHeaderCell> */}
                   <CTableDataCell>{book.client}</CTableDataCell>
                   <CTableDataCell>{book.contact}</CTableDataCell>
-                  <CTableDataCell>{book.futsalname}</CTableDataCell>
+                  <CTableDataCell>{book.futsalname? (<span>{book.futsalname.futsalname}</span>):
+                  (<span>N/A</span>)}</CTableDataCell>
                   <CTableDataCell>{book.paymentmethod}</CTableDataCell>
-                  <CTableDataCell>{book.status === '1' ? 'Confirm' : 'Hold'}</CTableDataCell>
+                  <CTableDataCell>{book.status === 1 ? 'Confirm' : 'Hold'}</CTableDataCell>
                   <CTableDataCell>
                     <CButtonGroup role="group" aria-label="Basic mixed styles example">
                       <CButton color="warning" shape="rounded-0">
-                        <Link to={`/bookings/${book.id}/edit`}>Edit</Link>
+                        <Link to={`/bookings/${book._id}/edit`}>Edit</Link>
                       </CButton>
-                      <CButton onClick={() => handleDelete(book)} color="danger" shape="rounded-0">
+                      <CButton onClick={() => handleDelete(book._id)} color="danger" shape="rounded-0">
                         Delete
                       </CButton>
                     </CButtonGroup>
@@ -241,24 +193,21 @@ const Bookings = () => {
       </CCard>
       <CPagination aria-label="Page navigation example" className="pagination">
         <CPaginationItem aria-label="Previous" className="page-itm">
-          <button className="page-link" onClick={prePage} disabled={currentPage === 1}>
-            <span aria-hidden="true">&laquo;</span>
-          </button>
+          <CButton className={`page-link ${!books.hasPrevPage ? 'disabled' : ''}`} onClick={prePage} size="sm" >
+                Prev
+            {/* &laquo; */}
+          </CButton>
         </CPaginationItem>
-        {numbers.map((n, index) => (
-          <CPaginationItem
-            className={`page-link ${currentPage === n ? 'active' : ''}`}
-            key={index}
-            onClick={() => changeCPage(n)}
-          >
-            {n}
-          </CPaginationItem>
-        ))}
-        <div className="pagination-info">{currentPage}</div>
+        <CPaginationItem
+          className='page-link'
+        >
+          {books.page}
+        </CPaginationItem>
         <CPaginationItem aria-label="Next" className="page-item">
-          <button className="page-link" onClick={nextPage} disabled={currentPage === npage}>
-            <span aria-hidden="true">&raquo;</span>
-          </button>
+          <CButton className={`page-link ${!books.hasNextPage ? 'disabled' : ''}`} size="sm" onClick={nextPage}>  
+                Next
+            {/* &raquo; */}
+          </CButton>
         </CPaginationItem>
       </CPagination>
     </div>

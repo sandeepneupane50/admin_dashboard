@@ -30,7 +30,7 @@ const AppHeaderDropdown = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('user-token');
+    localStorage.removeItem('token');
     navigate('/login');
   };
   return (
